@@ -1,0 +1,72 @@
+# **App Name**: AimHigh
+
+## Core Features:
+
+- Authentication: Register & login with email, phone, or social accounts (Google, Facebook, Apple).
+- Profile: Profile with saved delivery addresses, phone number, and order history.
+- Wishlist: Wishlist for favorite furniture items.
+- Payment Methods: Save multiple payment methods securely.
+- Product Filters: Advanced product filters: price range, material (wood, metal, glass), size, color, brand, room type (bedroom, office, living room).
+- Search: Search with autocomplete & voice search.
+- Product Details: Detailed product page: dimensions, material, color options, care instructions, warranty info, and customer reviews.
+- Recommendations: “Frequently bought together” and “You may also like” recommendations.
+- Compare Products: Compare products side by side.
+- Cart Management: Add/remove products, change quantity from cart.
+- Shipping Calculator: Shipping cost calculator (based on location).
+- Delivery Options: Multiple delivery options: standard, express, or scheduled delivery (choose a date).
+- Discounts & Coupons: Discounts & coupons (admin can create promotions).
+- Checkout: Checkout with Paystack, Stripe, or PayPal.
+- Payment Gateways: Multiple payment gateways: Paystack, Flutterwave, Stripe, PayPal, crypto (optional).
+- Split Payments: Split payments (pay deposit now, balance on delivery).
+- Fraud Protection: Secure transactions with fraud protection.
+- Order Tracking: Real-time order tracking with status updates (processing, shipped, out for delivery, delivered).
+- Notifications: Push/email/WhatsApp notifications.
+- Delivery Notes: Add delivery notes (e.g., “Leave at reception” or “Call on arrival”).
+- Product Reviews: Review & rating system for products.
+- Customer Photos: Upload customer photos of furniture.
+- Warranty Registration: Warranty registration for furniture.
+- Service Requests: Service requests (e.g., repair, assembly).
+- Loyalty Points: Loyalty points for every purchase, redeemable for discounts.
+- AI Assistant: Suggests furniture sets based on user’s style, budget, and room size using an AI tool.
+- Virtual Consultation: Book a video call with an interior designer.
+- Offline Support: App works offline to let users browse saved items.
+- Product Management (Admin): Add/edit/delete products with multiple images, 3D models, and videos.(admin), admin is premade
+- Bulk Upload (Admin): Bulk product upload via CSV/Excel.(admin)
+- Category Management (Admin): Set categories (sofa, table, bed, office, etc.) and attributes (color, material).(admin)
+- Stock Management (Admin): Stock management: track inventory, low stock alerts.(admin)
+- Pricing Controls (Admin): Pricing controls: discounts, flash sales, bundle deals.(admin)
+- Order View (Admin): View all customer orders with status.(admin)
+- Order Update (Admin): Update order status (processing, shipped, delivered).(admin)
+- Invoice Generation (Admin): Generate invoices and receipts.(admin)
+- Delivery Assignment (Admin): Assign delivery staff or third-party logistics providers.(admin)
+- Returns/Refunds (Admin): Handle returns, refunds, and exchanges.(admin)
+- Customer View (Admin): View all customers, order history, and lifetime value.(admin)
+- Review Management (Admin): Manage reviews (approve, hide inappropriate).(admin)
+- Customer Messaging (Admin): Send messages or offers directly to customers.(admin)
+- Loyalty Rewards (Admin): Reward loyal customers with points or discounts.(admin)
+- Sales Analytics (Admin): Dashboard with sales analytics: daily, weekly, monthly.(admin)
+- Product Analytics (Admin): Most viewed products, most sold, highest revenue items.(admin)
+- Acquisition Channels (Admin): Customer acquisition channels (SEO, ads, referrals).(admin)
+- Cart Analytics (Admin): Abandoned cart analytics (see who added but didn’t buy).(admin)
+- Profit Tracking (Admin): Profit & loss tracking.(admin)
+- Marketing Campaigns (Admin): Push notifications & email campaigns (new arrivals, discounts).(admin)
+- SEO Tools (Admin): SEO optimization tools (meta tags, sitemap, Google indexing).(admin)
+- Social Media (Admin): Social media integration (share products on Instagram, Pinterest, etc.).
+- Courier Integration (Admin): Integration with courier services (DHL, FedEx, local logistics).
+- Shipment Tracking (Admin): Track shipments directly from the admin dashboard.
+- Delivery Cost (Admin): Delivery cost calculator for different regions.
+- SMS Updates (Admin): Automated SMS/WhatsApp updates to buyers.(admin)
+- AI Powered Recommendations: AI-powered recommendations -> Personalized shopping experience.
+- Omnichannel Experience: Seamless omnichannel experience -> Works as website, PWA, and mobile app.
+
+## Style Guidelines:
+
+- Primary color: White or light grey for a clean and modern look.
+- Secondary color: Use a muted, earthy tone like a light brown or beige for accents.
+- Accent color: A bolder color like a dark teal or navy blue for call-to-action buttons and important elements.
+- Headings: Use a modern, slightly rounded sans-serif font for headings to give a friendly feel.
+- Body: A clean and readable sans-serif font for body text to ensure clarity.
+- Minimalist icons: Use simple line icons for categories and features.
+- Clean and spacious layout: Ensure enough white space to give the design room to breathe.
+- Grid system: Use a grid system to keep the design organized and consistent.
+- Subtle animations: Use smooth, subtle animations for transitions and interactions.
