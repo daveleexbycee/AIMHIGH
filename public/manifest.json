@@ -1,0 +1,21 @@
+{
+  "name": "Morden - Modern Furniture Brands",
+  "short_name": "Morden",
+  "description": "Discover modern furniture for your home. Up to 50% off.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

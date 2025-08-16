@@ -59,9 +59,9 @@ export function FurnitureSuggester() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      stylePreferences: "",
-      budget: 1000,
-      roomSize: "",
+      stylePreferences: "Modern",
+      budget: 1500,
+      roomSize: "Medium",
     },
   });
 
@@ -86,14 +86,14 @@ export function FurnitureSuggester() {
   const SKELETON_COUNT = 3;
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-12">
-      <Card className="bg-card/80 backdrop-blur-sm">
+    <div className="w-full max-w-6xl mx-auto space-y-12 my-12">
+      <Card className="bg-card/80 backdrop-blur-sm border-2 border-dashed">
         <CardHeader>
           <CardTitle className="text-2xl font-headline flex items-center gap-2">
             <Sparkles className="text-primary" />
-            AI Furniture Set Suggester
+            Need Ideas? Try our AI Suggester!
           </CardTitle>
-          <CardDescription>Tell us your preferences, and our AI will suggest the perfect furniture sets for your space.</CardDescription>
+          <CardDescription>Fill out the fields below and our AI will suggest some furniture sets for you.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -177,7 +177,7 @@ export function FurnitureSuggester() {
                 {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
                     <Card key={index}>
                         <CardHeader>
-                            <Skeleton className="h-24 w-full rounded-md" />
+                            <Skeleton className="h-48 w-full rounded-md" />
                             <CardTitle>
                                 <Skeleton className="h-8 w-3/4 mt-4" />
                             </CardTitle>
@@ -204,12 +204,12 @@ export function FurnitureSuggester() {
 
       {suggestions && suggestions.suggestedSets.length > 0 && (
         <div className="space-y-8">
-          <h2 className="text-3xl font-headline text-center">Here are your personalized suggestions!</h2>
+          <h2 className="text-3xl font-headline text-center">Here are your AI-powered suggestions!</h2>
           <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
             {suggestions.suggestedSets.map((set, index) => (
               <Card key={index} className="flex flex-col">
                 <CardHeader>
-                  <div className="aspect-video relative w-full mb-4">
+                  <div className="aspect-w-16 aspect-h-9 relative w-full mb-4">
                     <Image src="https://placehold.co/600x400.png" alt={set.setName} fill className="rounded-md object-cover" data-ai-hint="living room furniture"/>
                   </div>
                   <CardTitle className="font-headline">{set.setName}</CardTitle>
