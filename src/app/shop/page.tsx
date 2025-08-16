@@ -1,0 +1,109 @@
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import Link from "next/link";
+
+const products = [
+  {
+    id: 1,
+    name: "Elegant Vase",
+    price: 45,
+    image: "https://placehold.co/400x400.png",
+    hint: "ceramic vase",
+    tag: "Hot"
+  },
+  {
+    id: 2,
+    name: "Wooden Stool",
+    price: 80,
+    image: "https://placehold.co/400x400.png",
+    hint: "wood stool",
+    tag: "New"
+  },
+  {
+    id: 3,
+    name: "Patterned Vase",
+    price: 52,
+    image: "https://placehold.co/400x400.png",
+    hint: "patterned vase"
+  },
+  {
+    id: 4,
+    name: "Vintage Lamp",
+    price: 120,
+    image: "https://placehold.co/400x400.png",
+    hint: "vintage lamp"
+  },
+   {
+    id: 5,
+    name: "Minimalist Chair",
+    price: 150,
+    image: "https://placehold.co/400x400.png",
+    hint: "white chair",
+    tag: "Sale"
+  },
+  {
+    id: 6,
+    name: "Round Coffee Table",
+    price: 200,
+    image: "https://placehold.co/400x400.png",
+    hint: "coffee table"
+  },
+  {
+    id: 7,
+    name: "Cozy Armchair",
+    price: 350,
+    image: "https://placehold.co/400x400.png",
+    hint: "armchair"
+  },
+  {
+    id: 8,
+    name: "Modern Bookshelf",
+    price: 180,
+    image: "https://placehold.co/400x400.png",
+    hint: "bookshelf"
+  },
+];
+
+export default function ShopPage() {
+  return (
+    <>
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold font-headline mb-8">Shop All Products</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {products.map((product) => (
+            <Card key={product.id} className="group overflow-hidden">
+               <Link href={`/product/${product.id}`}>
+                <CardHeader className="p-0 relative">
+                  <Image 
+                    src={product.image} 
+                    alt={product.name} 
+                    width={400} 
+                    height={400} 
+                    className="object-cover w-full h-full aspect-square group-hover:scale-105 transition-transform duration-300" 
+                    data-ai-hint={product.hint}
+                  />
+                  {product.tag && (
+                    <Badge className="absolute top-3 right-3" variant={product.tag === 'Hot' ? 'destructive' : 'default'}>{product.tag}</Badge>
+                  )}
+                </CardHeader>
+              </Link>
+              <CardContent className="pt-4">
+                 <Link href={`/product/${product.id}`}>
+                  <CardTitle className="text-lg font-medium hover:text-primary transition-colors">{product.name}</CardTitle>
+                </Link>
+              </CardContent>
+              <CardFooter className="flex justify-between items-center">
+                <p className="font-bold text-primary text-lg">${product.price}</p>
+                <Button variant="outline" size="sm">Add to Cart</Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </main>
+    </>
+  );
+}

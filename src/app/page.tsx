@@ -1,9 +1,9 @@
 import { Header } from "@/components/header";
 import { ProductList } from "@/components/product-list";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search } from 'lucide-react';
+import { FurnitureSuggester } from "@/components/furniture-suggester";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -18,7 +18,9 @@ export default function Home() {
             <p className="text-lg text-muted-foreground mb-6">
               Up To 50% OFF
             </p>
-            <Button size="lg">Shop The Collection</Button>
+            <Button size="lg" asChild>
+              <Link href="/shop">Shop The Collection</Link>
+            </Button>
           </div>
           <div className="md:w-1/2">
             <Image 
@@ -34,26 +36,10 @@ export default function Home() {
         
         <ProductList />
 
-        <FurnitureSuggester />
+        <section className="my-16">
+         <FurnitureSuggester />
+        </section>
       </main>
     </div>
   );
-}
-
-// Keep furniture suggester for now, but hide it.
-function FurnitureSuggester() {
-  return (
-    <div className="hidden">
-      <div className="z-10 w-full flex flex-col items-center text-center space-y-8">
-        <header className="space-y-4">
-          <p className="max-w-2xl text-lg md:text-xl text-foreground/80">
-            Discover furniture that perfectly fits your life.
-          </p>
-          <p className="max-w-2xl text-base text-muted-foreground">
-            Our AI-powered tool helps you visualize and choose complete furniture sets tailored to your unique style, budget, and living space. Let's build your dream home, together.
-          </p>
-        </header>
-      </div>
-    </div>
-  )
 }
