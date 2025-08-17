@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Morden - Modern Furniture Brands',
+  title: 'Aimhigh - Modern Furniture Brands',
   description: 'Discover modern furniture for your home. Up to 50% off.',
   manifest: '/manifest.json',
 };

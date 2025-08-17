@@ -43,7 +43,7 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
             <Triangle className="h-8 w-8 text-primary" />
-            <span className="font-bold text-2xl font-headline">Morden</span>
+            <span className="font-bold text-2xl font-headline">Aimhigh</span>
         </Link>
         <Card>
           <CardHeader>

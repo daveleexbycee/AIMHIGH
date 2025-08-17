@@ -13,7 +13,7 @@ export default function Home() {
         <section className="bg-secondary/30 rounded-lg p-8 flex flex-col md:flex-row items-center justify-between mb-12">
           <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
             <h1 className="text-4xl md:text-5xl font-headline font-bold text-foreground mb-4">
-              Morden Furniture Brands
+              Aimhigh Furniture Brands
             </h1>
             <p className="text-lg text-muted-foreground mb-6">
               Up To 50% OFF
