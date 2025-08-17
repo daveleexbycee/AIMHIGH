@@ -2,15 +2,23 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart, Triangle, Menu, Sun, Moon } from 'lucide-react';
+import { Search, ShoppingCart, Triangle, Menu, Sun, Moon, LogOut } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Header() {
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/shop", label: "Shop" },
@@ -20,6 +28,19 @@ export function Header() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({ title: 'Logged out successfully!' });
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Logout Failed',
+        description: error.message,
+      });
+    }
+  };
 
   const renderThemeChanger = () => {
     if (!mounted) return null;
@@ -35,6 +56,15 @@ export function Header() {
         <span className="sr-only">Toggle theme</span>
       </Button>
     );
+  };
+
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return "";
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`;
+    }
+    return name[0];
   };
 
   return (
@@ -63,9 +93,21 @@ export function Header() {
           <Button variant="ghost" size="icon">
             <ShoppingCart className="h-5 w-5" />
           </Button>
-          <Button asChild>
-            <Link href="/login">Login</Link>
-          </Button>
+          {user ? (
+            <>
+              <Avatar>
+                <AvatarImage src={user.photoURL ?? undefined} />
+                <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+              </Avatar>
+              <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </>
+          ) : (
+            <Button asChild>
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
         </div>
 
         <div className="md:hidden flex items-center">
@@ -98,9 +140,25 @@ export function Header() {
                         <ShoppingCart className="mr-2 h-5 w-5" />
                         Cart
                     </Button>
-                    <Button asChild>
-                        <Link href="/login">Login</Link>
-                    </Button>
+                    {user ? (
+                        <>
+                         <div className="flex items-center gap-2">
+                            <Avatar>
+                                <AvatarImage src={user.photoURL ?? undefined} />
+                                <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+                            </Avatar>
+                            <span className="font-medium">{user.displayName || user.email}</span>
+                         </div>
+                         <Button onClick={handleLogout}>
+                            <LogOut className="mr-2 h-5 w-5" />
+                            Logout
+                        </Button>
+                        </>
+                    ) : (
+                        <Button asChild>
+                            <Link href="/login">Login</Link>
+                        </Button>
+                    )}
                 </div>
               </div>
             </SheetContent>

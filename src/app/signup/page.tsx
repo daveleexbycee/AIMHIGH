@@ -1,12 +1,16 @@
-
 "use client"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
+import { auth } from "@/lib/firebase"
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth"
 import { Triangle } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -38,6 +42,46 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   }
 
 export default function SignupPage() {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const { toast } = useToast();
+    const router = useRouter();
+
+    const handleSignup = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(userCredential.user, {
+                displayName: `${firstName} ${lastName}`
+            });
+            toast({ title: 'Account created successfully!' });
+            router.push('/');
+        } catch (error: any) {
+            toast({
+                variant: 'destructive',
+                title: 'Signup Failed',
+                description: error.message,
+            });
+        }
+    };
+
+    const handleGoogleSignup = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            await signInWithPopup(auth, provider);
+            toast({ title: 'Signed up with Google successfully!' });
+            router.push('/');
+        } catch (error: any) {
+            toast({
+                variant: 'destructive',
+                title: 'Google Signup Failed',
+                description: error.message,
+            });
+        }
+    };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950 p-4">
       <div className="w-full max-w-md">
@@ -53,66 +97,76 @@ export default function SignupPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4">
-               <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="first-name">First name</Label>
-                  <Input id="first-name" placeholder="Max" required />
+            <form onSubmit={handleSignup}>
+                <div className="grid gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                    <Label htmlFor="first-name">First name</Label>
+                    <Input id="first-name" placeholder="Max" required value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                    </div>
+                    <div className="grid gap-2">
+                    <Label htmlFor="last-name">Last name</Label>
+                    <Input id="last-name" placeholder="Robinson" required value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                    </div>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="last-name">Last name</Label>
-                  <Input id="last-name" placeholder="Robinson" required />
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="address">Address</Label>
-                <Input id="address" placeholder="1234 Main St" />
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="grid gap-2 col-span-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input id="city" placeholder="New York" />
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    />
                 </div>
                 <div className="grid gap-2">
-                    <Label htmlFor="zip">Zip</Label>
-                    <Input id="zip" placeholder="10001" />
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" />
                 </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" />
-              </div>
-              <Button type="submit" className="w-full">
-                Create an account
-              </Button>
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
+                <div className="grid gap-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input id="address" placeholder="1234 Main St" />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                    Or continue with
-                    </span>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="grid gap-2 col-span-2">
+                      <Label htmlFor="city">City</Label>
+                      <Input id="city" placeholder="New York" />
+                  </div>
+                  <div className="grid gap-2">
+                      <Label htmlFor="zip">Zip</Label>
+                      <Input id="zip" placeholder="10001" />
+                  </div>
                 </div>
-              </div>
-                <Button variant="outline" className="w-full">
-                    <GoogleIcon className="mr-2 h-4 w-4" />
-                    Sign up with Google
+                <div className="grid gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input 
+                        id="password" 
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+                <Button type="submit" className="w-full">
+                    Create an account
                 </Button>
-            </div>
+                <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-card px-2 text-muted-foreground">
+                        Or continue with
+                        </span>
+                    </div>
+                </div>
+                    <Button variant="outline" className="w-full" type="button" onClick={handleGoogleSignup}>
+                        <GoogleIcon className="mr-2 h-4 w-4" />
+                        Sign up with Google
+                    </Button>
+                </div>
+            </form>
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
               <Link href="/login" className="underline">
