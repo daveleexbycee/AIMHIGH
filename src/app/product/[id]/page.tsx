@@ -1,10 +1,14 @@
+"use client";
+
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Star, Truck, ShieldCheck } from "lucide-react";
+import { Star, Truck, ShieldCheck, ShoppingCart } from "lucide-react";
+import { useCart, Product } from "@/hooks/use-cart";
+import { useToast } from "@/hooks/use-toast";
 
-const products = [
+const products: Product[] = [
   { id: 1, name: "Elegant Vase", price: 45, image: "https://placehold.co/400x400.png", hint: "ceramic vase", tag: "Hot", description: "A beautifully crafted ceramic vase, perfect for adding a touch of elegance to any room. Its minimalist design complements a variety of decor styles." },
   { id: 2, name: "Wooden Stool", price: 80, image: "https://placehold.co/400x400.png", hint: "wood stool", tag: "New", description: "Solid wood stool with a natural finish. Versatile and sturdy, it can be used as a seat, a side table, or a plant stand." },
   { id: 3, name: "Patterned Vase", price: 52, image: "https://placehold.co/400x400.png", hint: "patterned vase", description: "A unique vase featuring an intricate pattern. This statement piece is sure to draw attention and spark conversation." },
@@ -17,6 +21,8 @@ const products = [
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const product = products.find(p => p.id === parseInt(params.id));
+  const { addToCart } = useCart();
+  const { toast } = useToast();
 
   if (!product) {
     return (
@@ -28,6 +34,14 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       </>
     )
   }
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    toast({
+      title: "Added to cart!",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
 
   return (
     <>
@@ -63,7 +77,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </div>
             <p className="text-muted-foreground mb-6">{product.description}</p>
             <div className="flex items-center gap-4 mb-8">
-              <Button size="lg">Add to Cart</Button>
+              <Button size="lg" onClick={handleAddToCart}>
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Add to Cart
+              </Button>
               <Button size="lg" variant="outline">Buy Now</Button>
             </div>
             <div className="space-y-4 text-sm text-muted-foreground">

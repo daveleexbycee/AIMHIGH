@@ -1,10 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useCart, Product } from "@/hooks/use-cart";
+import { useToast } from "@/hooks/use-toast";
+import { ShoppingCart } from "lucide-react";
 
-const products = [
+const products: Product[] = [
   {
     id: 1,
     name: "Elegant Vase",
@@ -67,6 +72,17 @@ const products = [
 ];
 
 export function ProductList() {
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    toast({
+      title: "Added to cart!",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
+
   return (
     <section>
       <div className="flex justify-between items-center mb-6">
@@ -106,7 +122,10 @@ export function ProductList() {
             </CardContent>
             <CardFooter className="flex justify-between items-center">
               <p className="font-bold text-primary text-lg">${product.price}</p>
-              <Button variant="outline" size="sm">Add to Cart</Button>
+              <Button variant="outline" size="sm" onClick={() => handleAddToCart(product)}>
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Add to Cart
+              </Button>
             </CardFooter>
           </Card>
         ))}

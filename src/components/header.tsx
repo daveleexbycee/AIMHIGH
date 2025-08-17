@@ -12,12 +12,16 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useCart } from "@/hooks/use-cart";
+import { CartSheet } from "./cart-sheet";
 
 export function Header() {
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { cart } = useCart();
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -90,9 +94,19 @@ export function Header() {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           </div>
           {renderThemeChanger()}
-          <Button variant="ghost" size="icon">
-            <ShoppingCart className="h-5 w-5" />
-          </Button>
+          <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                {cart.length > 0 && (
+                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                    {cart.reduce((total, item) => total + item.quantity, 0)}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <CartSheet />
+          </Sheet>
           {user ? (
             <>
               <Avatar>
@@ -112,6 +126,19 @@ export function Header() {
 
         <div className="md:hidden flex items-center">
           {renderThemeChanger()}
+          <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                 {cart.length > 0 && (
+                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                    {cart.reduce((total, item) => total + item.quantity, 0)}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <CartSheet />
+          </Sheet>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -136,10 +163,6 @@ export function Header() {
                         <Input type="search" placeholder="Search" className="pr-10" />
                         <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     </div>
-                    <Button variant="ghost">
-                        <ShoppingCart className="mr-2 h-5 w-5" />
-                        Cart
-                    </Button>
                     {user ? (
                         <>
                          <div className="flex items-center gap-2">
