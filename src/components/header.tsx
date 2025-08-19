@@ -1,8 +1,9 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart, Triangle, Menu, Sun, Moon, LogOut } from 'lucide-react';
+import { Search, ShoppingCart, Triangle, Menu, Sun, Moon, LogOut, LayoutDashboard } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -14,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCart } from "@/hooks/use-cart.tsx";
 import { CartSheet } from "./cart-sheet";
+
+const ADMIN_EMAIL = "Agbidave40@gmail.com";
 
 export function Header() {
   const { setTheme, theme } = useTheme();
@@ -85,6 +88,11 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            {user?.email === ADMIN_EMAIL && (
+               <Link href="/admin/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
+                Dashboard
+              </Link>
+            )}
           </nav>
         </div>
 
@@ -157,6 +165,11 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
+                  {user?.email === ADMIN_EMAIL && (
+                    <Link href="/admin/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
+                        Dashboard
+                    </Link>
+                    )}
                 </nav>
                 <div className="flex flex-col gap-4 mt-auto">
                     <div className="relative">
