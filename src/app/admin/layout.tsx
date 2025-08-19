@@ -13,7 +13,7 @@ import {
   SidebarTrigger,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Triangle } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
@@ -22,6 +22,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Logo } from "@/components/ui/logo";
 
 const ADMIN_EMAIL = "agbidave40@gmail.com"; // We can replace this with a more robust role system later
 
@@ -83,7 +84,7 @@ export default function AdminLayout({
       <Sidebar>
         <SidebarHeader>
            <div className="flex items-center gap-2 p-2">
-             <Triangle className="h-6 w-6 text-primary" />
+             <Logo className="h-8 w-8" />
              <span className="font-bold text-lg font-headline">Aimhigh</span>
            </div>
         </SidebarHeader>

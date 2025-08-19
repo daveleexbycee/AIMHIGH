@@ -7,10 +7,10 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { auth } from "@/lib/firebase"
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import { Triangle } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { Logo } from "@/components/ui/logo"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -81,7 +81,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950 p-4">
       <div className="w-full max-w-md">
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-            <Triangle className="h-8 w-8 text-primary" />
+            <Logo className="h-10 w-10" />
             <span className="font-bold text-2xl font-headline">Aimhigh</span>
         </Link>
         <Card>

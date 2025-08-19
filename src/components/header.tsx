@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart, Triangle, Menu, Sun, Moon, LogOut, LayoutDashboard } from 'lucide-react';
+import { Search, ShoppingCart, Menu, Sun, Moon, LogOut, LayoutDashboard } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCart } from "@/hooks/use-cart.tsx";
 import { CartSheet } from "./cart-sheet";
+import { Logo } from "./ui/logo";
 
 const ADMIN_EMAIL = "agbidave40@gmail.com";
 
@@ -79,7 +80,7 @@ export function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
-            <Triangle className="h-6 w-6 text-primary" />
+            <Logo className="h-8 w-8" />
             <span className="font-bold text-lg font-headline">Aimhigh</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm">
@@ -156,7 +157,7 @@ export function Header() {
             <SheetContent side="right">
               <div className="flex flex-col gap-6 p-6">
                 <Link href="/" className="flex items-center gap-2">
-                  <Triangle className="h-6 w-6 text-primary" />
+                  <Logo className="h-8 w-8" />
                   <span className="font-bold text-lg font-headline">Aimhigh</span>
                 </Link>
                 <nav className="flex flex-col gap-4 text-lg">
