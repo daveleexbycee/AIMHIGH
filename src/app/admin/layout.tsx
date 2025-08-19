@@ -23,7 +23,7 @@ import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const ADMIN_EMAIL = "Agbidave40@gmail.com"; // We can replace this with a more robust role system later
+const ADMIN_EMAIL = "agbidave40@gmail.com"; // We can replace this with a more robust role system later
 
 export default function AdminLayout({
   children,
@@ -35,7 +35,7 @@ export default function AdminLayout({
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!loading && (!user || user.email !== ADMIN_EMAIL)) {
+    if (!loading && (!user || user.email?.toLowerCase() !== ADMIN_EMAIL)) {
       toast({
         variant: "destructive",
         title: "Access Denied",
@@ -68,7 +68,7 @@ export default function AdminLayout({
     return name[0];
   };
 
-  if (loading || !user || user.email !== ADMIN_EMAIL) {
+  if (loading || !user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
     return (
         <div className="flex h-screen items-center justify-center">
             <div className="text-center">

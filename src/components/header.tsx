@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCart } from "@/hooks/use-cart.tsx";
 import { CartSheet } from "./cart-sheet";
 
-const ADMIN_EMAIL = "Agbidave40@gmail.com";
+const ADMIN_EMAIL = "agbidave40@gmail.com";
 
 export function Header() {
   const { setTheme, theme } = useTheme();
@@ -88,7 +88,7 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
-            {user?.email === ADMIN_EMAIL && (
+            {user?.email?.toLowerCase() === ADMIN_EMAIL && (
                <Link href="/admin/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
                 Dashboard
               </Link>
@@ -165,7 +165,7 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
-                  {user?.email === ADMIN_EMAIL && (
+                  {user?.email?.toLowerCase() === ADMIN_EMAIL && (
                     <Link href="/admin/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
                         Dashboard
                     </Link>
