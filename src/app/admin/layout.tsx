@@ -23,7 +23,7 @@ import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const ADMIN_EMAIL = "admin@example.com"; // We can replace this with a more robust role system later
+const ADMIN_EMAIL = "Agbidave40@gmail.com"; // We can replace this with a more robust role system later
 
 export default function AdminLayout({
   children,
