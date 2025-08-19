@@ -24,7 +24,7 @@ export default function Home() {
           </div>
           <div className="md:w-1/2">
             <Image 
-              src="https://placehold.co/600x400.png"
+              src="https://images.unsplash.com/photo-1658704278342-201413834ce4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkYXJrJTIwZnVybml0dXJlfGVufDB8fHx8MTc1NTY0MDY2NXww&ixlib=rb-4.1.0&q=80&w=1080"
               alt="Modern yellow armchair next to a small table" 
               width={600} 
               height={400} 
