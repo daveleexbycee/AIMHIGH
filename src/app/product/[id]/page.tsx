@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Star, Truck, ShieldCheck, ShoppingCart } from "lucide-react";
-import { useCart, Product } from "@/hooks/use-cart";
+import { useCart, Product } from "@/hooks/use-cart.tsx";
 import { useToast } from "@/hooks/use-toast";
 
 const products: Product[] = [

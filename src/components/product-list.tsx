@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useCart, Product } from "@/hooks/use-cart";
+import { useCart, Product } from "@/hooks/use-cart.tsx";
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart } from "lucide-react";
 

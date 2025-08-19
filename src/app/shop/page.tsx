@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart, Product } from "@/hooks/use-cart";
+import { useCart, Product } from "@/hooks/use-cart.tsx";
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart } from "lucide-react";
 
