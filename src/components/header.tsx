@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart, Menu, Sun, Moon, LogOut, LayoutDashboard, Heart } from 'lucide-react';
+import { Search, ShoppingCart, Menu, Sun, Moon, LogOut, LayoutDashboard, Heart, History } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -34,6 +34,7 @@ export function Header() {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/shop", label: "Shop" },
+    { href: "/orders", label: "Orders", auth: true },
     { href: "/contact", label: "Contact Us" }
   ];
 
@@ -101,11 +102,14 @@ export function Header() {
         </div>
 
         <nav className="hidden md:flex items-center justify-center gap-6 text-sm flex-1">
-            {navLinks.map(link => (
-              <Link key={link.href} href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map(link => {
+              if (link.auth && !user) return null;
+              return (
+                <Link key={link.href} href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
+                  {link.label}
+                </Link>
+              )
+            })}
             {user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() && (
                <Link href="/admin/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
                 Dashboard
@@ -199,11 +203,14 @@ export function Header() {
                   <span className="font-bold text-lg font-headline">Aimhigh</span>
                 </Link>
                 <nav className="flex flex-col gap-4 text-lg">
-                   {navLinks.map(link => (
-                    <Link key={link.href} href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
-                      {link.label}
-                    </Link>
-                  ))}
+                   {navLinks.map(link => {
+                     if (link.auth && !user) return null;
+                     return (
+                      <Link key={link.href} href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
+                        {link.label}
+                      </Link>
+                     )
+                   })}
                   {user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() && (
                     <Link href="/admin/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
                         Dashboard

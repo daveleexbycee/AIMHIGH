@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, ShoppingBag } from "lucide-react";
+import { CheckCircle, ShoppingBag, History } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
@@ -40,7 +40,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
                     <p className="text-sm text-muted-foreground">Your Order ID is:</p>
                     <p className="text-lg font-bold font-mono tracking-widest">{orderId}</p>
                 </div>
-                <div className="flex gap-4 justify-center">
+                <div className="flex gap-4 justify-center flex-wrap">
                     <Button asChild>
                         <Link href="/shop">
                            <ShoppingBag className="mr-2" /> Continue Shopping
@@ -49,6 +49,11 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
                     <Button variant="outline" asChild>
                          <Link href={`/track-order?id=${orderId}`}>
                             Track Your Order
+                        </Link>
+                    </Button>
+                     <Button variant="secondary" className="w-full sm:w-auto" asChild>
+                        <Link href="/orders">
+                            <History className="mr-2" /> View Order History
                         </Link>
                     </Button>
                 </div>
