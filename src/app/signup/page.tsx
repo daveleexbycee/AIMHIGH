@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { auth } from "@/lib/firebase"
+import { addUser } from "@/lib/firestore"
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -53,9 +55,19 @@ export default function SignupPage() {
         e.preventDefault();
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(userCredential.user, {
+            const user = userCredential.user;
+            await updateProfile(user, {
                 displayName: `${firstName} ${lastName}`
             });
+
+            // Add user to Firestore
+            await addUser({
+                uid: user.uid,
+                displayName: `${firstName} ${lastName}`,
+                email: user.email!,
+                createdAt: new Date(),
+            });
+
             toast({ title: 'Account created successfully!' });
             router.push('/');
         } catch (error: any) {
@@ -70,7 +82,17 @@ export default function SignupPage() {
     const handleGoogleSignup = async () => {
         const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+             // Add user to Firestore
+             await addUser({
+                uid: user.uid,
+                displayName: user.displayName,
+                email: user.email!,
+                createdAt: new Date(),
+            });
+
             toast({ title: 'Signed up with Google successfully!' });
             router.push('/');
         } catch (error: any) {
@@ -121,25 +143,7 @@ export default function SignupPage() {
                     />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input id="address" placeholder="1234 Main St" />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="grid gap-2 col-span-2">
-                      <Label htmlFor="city">City</Label>
-                      <Input id="city" placeholder="New York" />
-                  </div>
-                  <div className="grid gap-2">
-                      <Label htmlFor="zip">Zip</Label>
-                      <Input id="zip" placeholder="10001" />
-                  </div>
-                </div>
-                <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Password</Label>
                     <Input 
                         id="password" 
                         type="password"
