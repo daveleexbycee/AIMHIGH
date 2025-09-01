@@ -1,21 +1,32 @@
 
 "use client";
 
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Star, Truck, ShieldCheck, ShoppingCart, Heart } from "lucide-react";
+import { Truck, ShieldCheck, ShoppingCart, Heart } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { products } from "@/lib/products";
+import { StarRating } from "@/components/star-rating";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const product = products.find(p => p.id === parseInt(params.id));
   const { addToCart } = useCart();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { user } = useAuth();
   const { toast } = useToast();
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
 
   const isWishlisted = product && wishlist.some(item => item.id === product.id);
 
@@ -29,6 +40,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       </>
     )
   }
+  
+  const totalReviews = product.reviews?.length || 0;
+  const averageRating = totalReviews > 0 
+    ? product.reviews!.reduce((acc, review) => acc + review.rating, 0) / totalReviews
+    : 0;
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -54,25 +70,17 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     }
   };
 
-  const renderStars = () => {
-    const stars = [];
-    const fullStars = Math.floor(product.rating);
-    const halfStar = product.rating % 1 !== 0;
-
-    for (let i = 0; i < fullStars; i++) {
-        stars.push(<Star key={`full-${i}`} className="w-5 h-5 fill-yellow-400 text-yellow-400" />);
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (rating === 0 || !comment) {
+        toast({ variant: "destructive", title: "Please provide a rating and a comment." });
+        return;
     }
-
-    // Note: half star implementation is simplified. For a real app, you might need a half-star icon.
-    if (halfStar) {
-        stars.push(<Star key="half" className="w-5 h-5 fill-yellow-400 text-yellow-400" />);
-    }
-
-    for (let i = 0; i < 5 - Math.ceil(product.rating); i++) {
-        stars.push(<Star key={`empty-${i}`} className="w-5 h-5 text-muted-foreground fill-muted-foreground/50" />);
-    }
-    return stars;
-};
+    // In a real app, you would submit this to your backend
+    toast({ title: "Review submitted!", description: "Thank you for your feedback." });
+    setRating(0);
+    setComment("");
+  };
 
 
   return (
@@ -98,12 +106,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4">{product.name}</h1>
              <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                    <div className="flex">
-                        {renderStars()}
-                    </div>
-                    <span className="text-muted-foreground text-sm">{product.rating}</span>
+                    <StarRating rating={averageRating} />
+                    <span className="text-muted-foreground text-sm">{averageRating.toFixed(1)}</span>
                 </div>
-                <span className="text-muted-foreground text-sm">({product.reviews} reviews)</span>
+                <span className="text-muted-foreground text-sm">({totalReviews} reviews)</span>
             </div>
             <div className="flex items-center gap-4 mb-6">
                 {product.originalPrice && (
@@ -134,7 +140,66 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
+
+        <Separator className="my-12" />
+
+        <div className="grid md:grid-cols-2 gap-12">
+            <section>
+                <h2 className="text-2xl font-bold font-headline mb-6">Customer Reviews</h2>
+                <div className="space-y-6">
+                    {product.reviews && product.reviews.length > 0 ? (
+                        product.reviews.map(review => (
+                            <div key={review.id} className="flex gap-4">
+                                <Avatar>
+                                    <AvatarImage src={review.avatar} />
+                                    <AvatarFallback>{review.user.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h4 className="font-semibold">{review.user}</h4>
+                                        <div className="ml-auto">
+                                            <StarRating rating={review.rating} />
+                                        </div>
+                                    </div>
+                                    <p className="text-muted-foreground text-sm">{review.comment}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-muted-foreground">No reviews yet. Be the first to review this product!</p>
+                    )}
+                </div>
+            </section>
+            <section>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Write a Review</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {user ? (
+                            <form onSubmit={handleReviewSubmit} className="space-y-4">
+                                <div>
+                                    <Label htmlFor="rating" className="mb-2 block">Your Rating</Label>
+                                    <StarRating rating={rating} onRatingChange={setRating} interactive />
+                                </div>
+                                 <div>
+                                    <Label htmlFor="comment">Your Review</Label>
+                                    <Textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Share your thoughts..." required/>
+                                 </div>
+                                <Button type="submit">Submit Review</Button>
+                            </form>
+                        ) : (
+                            <p className="text-muted-foreground">
+                                Please <a href="/login" className="underline text-primary">log in</a> to write a review.
+                            </p>
+                        )}
+                    </CardContent>
+                 </Card>
+            </section>
+        </div>
       </main>
     </>
   );
 }
+
+    

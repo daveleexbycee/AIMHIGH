@@ -3,6 +3,13 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+export interface Review {
+    id: number;
+    user: string;
+    avatar: string;
+    rating: number;
+    comment: string;
+}
 export interface Product {
   id: number;
   name: string;
@@ -13,7 +20,7 @@ export interface Product {
   tag?: string;
   description?: string;
   rating: number;
-  reviews: number;
+  reviews: Review[];
 }
 
 export interface CartItem extends Product {
@@ -102,3 +109,5 @@ export const useCart = () => {
   }
   return context;
 };
+
+    

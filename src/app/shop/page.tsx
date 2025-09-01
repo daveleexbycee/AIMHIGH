@@ -51,6 +51,7 @@ export default function ShopPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {products.map((product) => {
             const isWishlisted = wishlist.some(item => item.id === product.id);
+            const totalReviews = product.reviews?.length || 0;
             return (
               <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
               <div className="relative">
@@ -82,8 +83,8 @@ export default function ShopPage() {
                 </Link>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span>{product.rating}</span>
-                  <span>({product.reviews} reviews)</span>
+                  <span>{product.rating.toFixed(1)}</span>
+                  <span>({totalReviews} reviews)</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <div>
@@ -105,3 +106,5 @@ export default function ShopPage() {
     </>
   );
 }
+
+    
