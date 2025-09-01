@@ -5,15 +5,15 @@ export function Logo({ className, ...props }: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 100 100"
+      viewBox="0 0 108 108"
       className={cn("text-primary", className)}
       {...props}
     >
-      <circle cx="50" cy="50" r="50" fill="currentColor" />
+      <circle cx="54" cy="54" r="54" fill="currentColor" />
       <g fill="white">
         <text
-          x="50"
-          y="58"
+          x="54"
+          y="62"
           fontFamily="Lexend, sans-serif"
           fontSize="22"
           fontWeight="bold"
@@ -22,10 +22,10 @@ export function Logo({ className, ...props }: React.SVGProps<SVGSVGElement>) {
         >
           AIMHIGH
         </text>
-        <path d="M40 38 L60 22 M40 22 L60 38" stroke="white" strokeWidth="3" strokeLinecap="round" transform="rotate(-15, 50, 30)" />
-        <rect x="25" y="68" width="10" height="15" rx="2" />
-        <rect x="45" y="68" width="10" height="15" rx="2" />
-        <rect x="65" y="68" width="10" height="15" rx="2" />
+        <path d="M44 42 L64 26 M44 26 L64 42" stroke="white" strokeWidth="3" strokeLinecap="round" transform="rotate(-15, 54, 34)" />
+        <rect x="29" y="72" width="10" height="15" rx="2" />
+        <rect x="49" y="72" width="10" height="15" rx="2" />
+        <rect x="69" y="72" width="10" height="15" rx="2" />
       </g>
     </svg>
   );
