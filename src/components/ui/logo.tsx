@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 
 export function Logo({ className, ...props }: React.SVGProps<SVGSVGElement>) {
@@ -8,7 +9,7 @@ export function Logo({ className, ...props }: React.SVGProps<SVGSVGElement>) {
       className={cn("text-primary", className)}
       {...props}
     >
-      <circle cx="50" cy="50" r="48" fill="currentColor" />
+      <circle cx="50" cy="50" r="50" fill="currentColor" />
       <g fill="white">
         <text
           x="50"
