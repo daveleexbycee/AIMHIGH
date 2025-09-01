@@ -3,7 +3,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,26 +15,48 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { addOrder } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NIGERIA_STATES } from "@/lib/nigeria-data";
 
 
 export default function CheckoutPage() {
   const { user, loading } = useAuth();
-  const { cart, subtotal, shippingFee, totalPrice, clearCart } = useCart();
+  const { cart, subtotal, shippingFee, totalPrice, selectedState, setSelectedState, clearCart } = useCart();
   const router = useRouter();
   const { toast } = useToast();
 
   const [paymentMethod, setPaymentMethod] = useState("card");
+  const [selectedLGA, setSelectedLGA] = useState("");
+
+  const handleStateChange = (stateName: string) => {
+    const state = NIGERIA_STATES.find(s => s.name === stateName) || null;
+    setSelectedState(state);
+    setSelectedLGA(""); // Reset LGA when state changes
+  };
+
+  const availableLGAs = useMemo(() => {
+    return selectedState ? selectedState.lgas : [];
+  }, [selectedState]);
+
 
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login?redirect=/checkout");
     }
-  }, [user, loading, router]);
+    // Clear selected state on mount if cart is empty
+    if (cart.length === 0) {
+      setSelectedState(null);
+    }
+  }, [user, loading, router, cart.length, setSelectedState]);
 
   const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user) {
         toast({ variant: "destructive", title: "You must be logged in to place an order."});
+        return;
+    }
+    if (!selectedState || !selectedLGA) {
+        toast({ variant: "destructive", title: "Please select your state and LGA for shipping."});
         return;
     }
 
@@ -49,6 +71,7 @@ export default function CheckoutPage() {
             customerEmail: user.email!,
             items: cart,
             total: totalPrice,
+            shippingFee: shippingFee,
             status: "Pending", // Or based on payment
             date: new Date(),
             shippingAddress: {
@@ -56,6 +79,8 @@ export default function CheckoutPage() {
                 lastName: formData.get('lastName') as string,
                 address: formData.get('address') as string,
                 city: formData.get('city') as string,
+                state: selectedState.name,
+                lga: selectedLGA,
                 zip: formData.get('zip') as string,
             }
         });
@@ -99,7 +124,6 @@ export default function CheckoutPage() {
         <h1 className="text-3xl font-bold font-headline mb-8 text-center">Checkout</h1>
         <form onSubmit={handlePlaceOrder} className="grid md:grid-cols-2 gap-12 items-start">
           
-          {/* Shipping Information */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -117,17 +141,45 @@ export default function CheckoutPage() {
                     </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
+                  <Label htmlFor="address">Street Address</Label>
                   <Input name="address" id="address" placeholder="1234 Main St" required />
                 </div>
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="state">State</Label>
+                        <Select onValueChange={handleStateChange} required>
+                            <SelectTrigger id="state">
+                                <SelectValue placeholder="Select your state" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {NIGERIA_STATES.map(state => (
+                                    <SelectItem key={state.name} value={state.name}>{state.name}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="lga">LGA</Label>
+                         <Select value={selectedLGA} onValueChange={setSelectedLGA} required disabled={!selectedState}>
+                            <SelectTrigger id="lga">
+                                <SelectValue placeholder="Select your LGA" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {availableLGAs.map(lga => (
+                                    <SelectItem key={lga} value={lga}>{lga}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      <div className="space-y-2">
                         <Label htmlFor="city">City</Label>
-                        <Input name="city" id="city" placeholder="New York" required />
+                        <Input name="city" id="city" placeholder="e.g. Port Harcourt" required />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="zip">ZIP Code</Label>
-                        <Input name="zip" id="zip" placeholder="10001" required />
+                        <Input name="zip" id="zip" placeholder="10001" />
                     </div>
                 </div>
                 <div className="space-y-2">
@@ -178,7 +230,6 @@ export default function CheckoutPage() {
             </Card>
           </div>
 
-          {/* Order Summary */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -207,7 +258,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between">
                   <p>Shipping</p>
-                  <p>{shippingFee === 0 ? 'Free' : `₦${shippingFee.toFixed(2)}`}</p>
+                  <p>{selectedState ? `₦${shippingFee.toFixed(2)}` : 'Select state to see'}</p>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
@@ -216,7 +267,7 @@ export default function CheckoutPage() {
                 </div>
               </CardContent>
             </Card>
-            <Button type="submit" size="lg" className="w-full">
+            <Button type="submit" size="lg" className="w-full" disabled={cart.length === 0}>
               Place Order
             </Button>
           </div>

@@ -23,8 +23,11 @@ export interface Order {
       lastName: string;
       address: string;
       city: string;
+      state: string;
+      lga: string;
       zip: string;
   }
+  shippingFee: number;
 }
 
 export function useOrders() {

@@ -2,6 +2,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { NIGERIA_STATES, State } from "@/lib/nigeria-data";
 
 export interface Review {
     id: number;
@@ -37,12 +38,15 @@ interface CartContextType {
   subtotal: number;
   shippingFee: number;
   totalPrice: number;
+  selectedState: State | null;
+  setSelectedState: (state: State | null) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [selectedState, setSelectedState] = useState<State | null>(null);
 
   useEffect(() => {
     try {
@@ -97,12 +101,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  const shippingThreshold = 700000;
-  const shippingFee = subtotal > 0 && subtotal < shippingThreshold ? subtotal * 0.15 : 0;
+  
+  const shippingFee = selectedState && subtotal > 0
+    ? subtotal * selectedState.shippingRate
+    : 0;
+  
   const totalPrice = subtotal + shippingFee;
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, subtotal, shippingFee, totalPrice }}>
+    <CartContext.Provider value={{ 
+        cart, 
+        addToCart, 
+        removeFromCart, 
+        updateQuantity, 
+        clearCart, 
+        subtotal, 
+        shippingFee, 
+        totalPrice,
+        selectedState,
+        setSelectedState
+    }}>
       {children}
     </CartContext.Provider>
   );

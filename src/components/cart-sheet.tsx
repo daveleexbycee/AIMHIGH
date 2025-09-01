@@ -86,7 +86,7 @@ export function CartSheet() {
               </div>
                <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Shipping</span>
-                <span>{shippingFee === 0 ? 'Free' : `₦${shippingFee.toFixed(2)}`}</span>
+                 <span>{shippingFee > 0 ? `₦${shippingFee.toFixed(2)}` : 'Calculated at checkout'}</span>
               </div>
               <Separator />
                <div className="flex justify-between font-bold text-lg">
