@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
+  ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
@@ -71,6 +72,13 @@ export function AdminSalesChart({ orders }: AdminSalesChartProps) {
 
     return Array.from(dataMap.entries()).map(([name, total]) => ({ name, total }));
   }, [orders, timeframe]);
+  
+  const chartConfig = {
+      total: {
+        label: "Revenue",
+        color: "hsl(var(--primary))",
+      },
+  }
 
   return (
     <Card>
@@ -88,32 +96,34 @@ export function AdminSalesChart({ orders }: AdminSalesChartProps) {
         </Tabs>
       </CardHeader>
       <CardContent className="pl-2">
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={chartData}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="name"
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-            />
-            <YAxis
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={(value) => `₦${value / 1000}k`}
-            />
-             <ChartTooltip
-                content={<ChartTooltipContent
-                    formatter={(value) => `₦${Number(value).toLocaleString()}`}
-                    indicator="dot"
-                />}
-            />
-            <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        <ChartContainer config={chartConfig}>
+            <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={chartData}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                dataKey="name"
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                />
+                <YAxis
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `₦${value / 1000}k`}
+                />
+                <ChartTooltip
+                    content={<ChartTooltipContent
+                        formatter={(value) => `₦${Number(value).toLocaleString()}`}
+                        indicator="dot"
+                    />}
+                />
+                <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            </BarChart>
+            </ResponsiveContainer>
+        </ChartContainer>
       </CardContent>
     </Card>
   )
