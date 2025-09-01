@@ -1,4 +1,6 @@
 
+"use client";
+
 import {
     Card,
     CardContent,
@@ -15,8 +17,15 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { useOrders } from "@/hooks/use-orders";
   
 export default function AdminOrdersPage() {
+    const { orders, loading } = useOrders();
+
+    if (loading) {
+        return <div>Loading orders...</div>
+    }
+
     return (
         <Card>
             <CardHeader>
@@ -34,42 +43,17 @@ export default function AdminOrdersPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>
-                                <div className="font-medium">Liam Johnson</div>
-                                <div className="text-sm text-muted-foreground">liam@example.com</div>
-                            </TableCell>
-                            <TableCell>2023-08-15</TableCell>
-                            <TableCell><Badge>Fulfilled</Badge></TableCell>
-                            <TableCell className="text-right">₦250.00</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>
-                                <div className="font-medium">Olivia Smith</div>
-                                <div className="text-sm text-muted-foreground">olivia@example.com</div>
-                            </TableCell>
-                            <TableCell>2023-08-14</TableCell>
-                            <TableCell><Badge variant="secondary">Shipped</Badge></TableCell>
-                            <TableCell className="text-right">₦150.00</TableCell>
-                        </TableRow>
-                         <TableRow>
-                            <TableCell>
-                                <div className="font-medium">Noah Brown</div>
-                                <div className="text-sm text-muted-foreground">noah@example.com</div>
-                            </TableCell>
-                            <TableCell>2023-08-13</TableCell>
-                            <TableCell><Badge variant="outline">Pending</Badge></TableCell>
-                            <TableCell className="text-right">₦350.00</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>
-                                <div className="font-medium">Emma Williams</div>
-                                <div className="text-sm text-muted-foreground">emma@example.com</div>
-                            </TableCell>
-                            <TableCell>2023-08-12</TableCell>
-                            <TableCell><Badge>Fulfilled</Badge></TableCell>
-                            <TableCell className="text-right">₦450.00</TableCell>
-                        </TableRow>
+                        {orders.map(order => (
+                           <TableRow key={order.id}>
+                                <TableCell>
+                                    <div className="font-medium">{order.customerName}</div>
+                                    <div className="text-sm text-muted-foreground">{order.customerEmail}</div>
+                                </TableCell>
+                                <TableCell>{new Date(order.date.seconds * 1000).toLocaleDateString()}</TableCell>
+                                <TableCell><Badge variant={order.status === "Fulfilled" ? "default" : order.status === "Shipped" ? "secondary" : "outline"}>{order.status}</Badge></TableCell>
+                                <TableCell className="text-right">₦{order.total.toFixed(2)}</TableCell>
+                           </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </CardContent>

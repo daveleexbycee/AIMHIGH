@@ -13,11 +13,15 @@ import { useCart } from "@/hooks/use-cart";
 import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
+import { addOrder } from "@/lib/firestore";
+import { useToast } from "@/hooks/use-toast";
+
 
 export default function CheckoutPage() {
   const { user, loading } = useAuth();
   const { cart, totalPrice, clearCart } = useCart();
   const router = useRouter();
+  const { toast } = useToast();
 
   const [paymentMethod, setPaymentMethod] = useState("card");
 
@@ -27,12 +31,42 @@ export default function CheckoutPage() {
     }
   }, [user, loading, router]);
 
-  const handlePlaceOrder = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // In a real app, you would handle payment processing here.
+    if (!user) {
+        toast({ variant: "destructive", title: "You must be logged in to place an order."});
+        return;
+    }
+
+    const formData = new FormData(e.currentTarget);
     const orderId = `AIMHIGH-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    clearCart();
-    router.push(`/order-confirmation/${orderId}`);
+
+    try {
+        await addOrder({
+            id: orderId,
+            userId: user.uid,
+            customerName: `${formData.get('firstName')} ${formData.get('lastName')}`,
+            customerEmail: user.email!,
+            items: cart,
+            total: totalPrice,
+            status: "Pending", // Or based on payment
+            date: new Date(),
+            shippingAddress: {
+                firstName: formData.get('firstName') as string,
+                lastName: formData.get('lastName') as string,
+                address: formData.get('address') as string,
+                city: formData.get('city') as string,
+                zip: formData.get('zip') as string,
+            }
+        });
+
+        clearCart();
+        router.push(`/order-confirmation/${orderId}`);
+
+    } catch (error) {
+        console.error("Failed to place order:", error);
+        toast({ variant: "destructive", title: "Failed to place order. Please try again."})
+    }
   };
 
   if (loading || !user) {
@@ -75,30 +109,30 @@ export default function CheckoutPage() {
                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" defaultValue={user.displayName?.split(' ')[0] || ''} required />
+                        <Input name="firstName" id="firstName" defaultValue={user.displayName?.split(' ')[0] || ''} required />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" defaultValue={user.displayName?.split(' ')[1] || ''} required />
+                        <Input name="lastName" id="lastName" defaultValue={user.displayName?.split(' ')[1] || ''} required />
                     </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="address">Address</Label>
-                  <Input id="address" placeholder="1234 Main St" required />
+                  <Input name="address" id="address" placeholder="1234 Main St" required />
                 </div>
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      <div className="space-y-2">
                         <Label htmlFor="city">City</Label>
-                        <Input id="city" placeholder="New York" required />
+                        <Input name="city" id="city" placeholder="New York" required />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="zip">ZIP Code</Label>
-                        <Input id="zip" placeholder="10001" required />
+                        <Input name="zip" id="zip" placeholder="10001" required />
                     </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" defaultValue={user.email || ''} required />
+                  <Input name="email" id="email" type="email" defaultValue={user.email || ''} required />
                 </div>
               </CardContent>
             </Card>

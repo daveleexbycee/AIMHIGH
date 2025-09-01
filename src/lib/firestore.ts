@@ -1,9 +1,10 @@
 
 import { db } from './firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc } from 'firebase/firestore';
 import { Product } from '@/hooks/use-cart';
 
 const productsCollection = collection(db, 'products');
+const ordersCollection = collection(db, 'orders');
 
 export const addProduct = async (product: Omit<Product, 'id'>) => {
     return await addDoc(productsCollection, product);
@@ -17,4 +18,9 @@ export const updateProduct = async (id: string, product: Omit<Product, 'id'>) =>
 export const deleteProduct = async (id: string) => {
     const productDoc = doc(db, 'products', id);
     return await deleteDoc(productDoc);
+};
+
+export const addOrder = async (order: any) => {
+    const orderDoc = doc(ordersCollection, order.id);
+    return await setDoc(orderDoc, order);
 };

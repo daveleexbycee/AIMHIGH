@@ -1,4 +1,6 @@
 
+"use client";
+
 import {
     Card,
     CardContent,
@@ -15,8 +17,24 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { useOrders } from "@/hooks/use-orders";
 
-  export default function AdminDashboard() {
+export default function AdminDashboard() {
+  const { orders, loading } = useOrders();
+
+  if (loading) {
+    return <div>Loading dashboard data...</div>
+  }
+  
+  const totalRevenue = orders
+    .filter(order => order.status === 'Fulfilled')
+    .reduce((sum, order) => sum + order.total, 0);
+
+  const totalSales = orders.filter(order => order.status === 'Fulfilled').length;
+
+  const recentOrders = orders.slice(0, 5);
+
+
     return (
       <div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -39,9 +57,9 @@ import { Badge } from "@/components/ui/badge"
               </svg>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">₦45,231.89</div>
+              <div className="text-2xl font-bold">₦{totalRevenue.toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">
-                +20.1% from last month
+                Based on fulfilled orders
               </p>
             </CardContent>
           </Card>
@@ -65,9 +83,9 @@ import { Badge } from "@/components/ui/badge"
               </svg>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+2350</div>
+              <div className="text-2xl font-bold">+{totalSales}</div>
               <p className="text-xs text-muted-foreground">
-                +180.1% from last month
+                Total fulfilled orders
               </p>
             </CardContent>
           </Card>
@@ -93,7 +111,7 @@ import { Badge } from "@/components/ui/badge"
             <CardContent>
               <div className="text-2xl font-bold">+12,234</div>
               <p className="text-xs text-muted-foreground">
-                +19% from last month
+                (Static Data)
               </p>
             </CardContent>
           </Card>
@@ -118,7 +136,7 @@ import { Badge } from "@/components/ui/badge"
             <CardContent>
               <div className="text-2xl font-bold">+573</div>
               <p className="text-xs text-muted-foreground">
-                +201 since last hour
+                (Static Data)
               </p>
             </CardContent>
           </Card>
@@ -126,7 +144,7 @@ import { Badge } from "@/components/ui/badge"
         <Card className="mt-8">
             <CardHeader>
                 <CardTitle>Recent Orders</CardTitle>
-                <CardDescription>A list of recent orders from your store.</CardDescription>
+                <CardDescription>A list of the 5 most recent orders from your store.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Table>
@@ -139,33 +157,17 @@ import { Badge } from "@/components/ui/badge"
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
+                       {recentOrders.map(order => (
+                         <TableRow key={order.id}>
                             <TableCell>
-                                <div className="font-medium">Liam Johnson</div>
-                                <div className="text-sm text-muted-foreground">liam@example.com</div>
+                                <div className="font-medium">{order.customerName}</div>
+                                <div className="text-sm text-muted-foreground">{order.customerEmail}</div>
                             </TableCell>
-                            <TableCell>2023-08-15</TableCell>
-                            <TableCell><Badge>Fulfilled</Badge></TableCell>
-                            <TableCell className="text-right">₦250.00</TableCell>
+                            <TableCell>{new Date(order.date.seconds * 1000).toLocaleDateString()}</TableCell>
+                            <TableCell><Badge variant={order.status === "Fulfilled" ? "default" : order.status === "Shipped" ? "secondary" : "outline"}>{order.status}</Badge></TableCell>
+                            <TableCell className="text-right">₦{order.total.toFixed(2)}</TableCell>
                         </TableRow>
-                        <TableRow>
-                            <TableCell>
-                                <div className="font-medium">Olivia Smith</div>
-                                <div className="text-sm text-muted-foreground">olivia@example.com</div>
-                            </TableCell>
-                            <TableCell>2023-08-14</TableCell>
-                            <TableCell><Badge variant="secondary">Shipped</Badge></TableCell>
-                            <TableCell className="text-right">₦150.00</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>
-                                <div className="font-medium">Noah Brown</div>
-                                <div className="text-sm text-muted-foreground">noah@example.com</div>
-                            </TableCell>
-                            <TableCell>2023-08-13</TableCell>
-                            <TableCell><Badge variant="outline">Pending</Badge></TableCell>
-                            <TableCell className="text-right">₦350.00</TableCell>
-                        </TableRow>
+                       ))}
                     </TableBody>
                 </Table>
             </CardContent>
