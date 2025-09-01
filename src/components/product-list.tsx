@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCart, Product } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Star, Heart, GitCompareArrows, ArrowRight } from "lucide-react";
+import { ShoppingCart, Star, Heart, ArrowRight } from "lucide-react";
 import { useProducts } from "@/hooks/use-products";
 
 export function ProductList() {
@@ -81,9 +81,6 @@ export function ProductList() {
                  <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full" onClick={() => handleWishlistToggle(product)}>
                         <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full">
-                        <GitCompareArrows className="h-4 w-4" />
                     </Button>
                 </div>
               </div>

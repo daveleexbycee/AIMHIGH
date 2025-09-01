@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useCart, Product } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Star, Heart, GitCompareArrows, SlidersHorizontal, X } from "lucide-react";
+import { ShoppingCart, Star, Heart, SlidersHorizontal, X } from "lucide-react";
 import { useProducts } from "@/hooks/use-products";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -181,7 +181,7 @@ function Shop() {
                     const isWishlisted = wishlist.some(item => item.id === product.id);
                     const totalReviews = product.reviews?.length || 0;
                     const averageRating = totalReviews > 0
-                        ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews
+                        ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length
                         : 0;
                     return (
                     <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
@@ -202,9 +202,6 @@ function Shop() {
                             <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full" onClick={() => handleWishlistToggle(product)}>
                                     <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full">
-                                    <GitCompareArrows className="h-4 w-4" />
                                 </Button>
                             </div>
                         </div>
