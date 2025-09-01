@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
 import { CartProvider } from '@/hooks/use-cart.tsx';
+import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'Aimhigh - Modern Furniture Brands',
@@ -32,7 +33,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <CartProvider>
-            {children}
+            <div className="flex flex-col min-h-screen">
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
             <Toaster />
           </CartProvider>
         </ThemeProvider>

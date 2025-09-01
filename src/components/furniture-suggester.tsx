@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import { Sparkles, Sofa, LoaderCircle } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -207,28 +208,30 @@ export function FurnitureSuggester() {
           <h2 className="text-3xl font-headline text-center">Here are your AI-powered suggestions!</h2>
           <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
             {suggestions.suggestedSets.map((set, index) => (
-              <Card key={index} className="flex flex-col">
-                <CardHeader>
-                  <div className="aspect-w-16 aspect-h-9 relative w-full mb-4">
-                    <Image src="https://placehold.co/600x400.png" alt={set.setName} fill className="rounded-md object-cover" data-ai-hint="living room furniture"/>
-                  </div>
-                  <CardTitle className="font-headline">{set.setName}</CardTitle>
-                  <CardDescription>{set.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-grow space-y-4">
-                    <h3 className="font-semibold">Items included:</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {set.items.map((item, i) => (
-                            <Badge key={i} variant="secondary">{item}</Badge>
-                        ))}
+              <Link href={`/shop?q=${encodeURIComponent(set.setName)}`} key={index} className="block hover:shadow-lg transition-shadow duration-300 rounded-lg">
+                <Card className="flex flex-col h-full">
+                  <CardHeader>
+                    <div className="relative aspect-square w-full mb-4">
+                      <Image src="https://placehold.co/600x400.png" alt={set.setName} fill className="rounded-md object-cover" data-ai-hint="living room furniture"/>
                     </div>
-                </CardContent>
-                <CardFooter>
-                    <p className="text-lg font-semibold text-primary">
-                        Est. Price: ${set.estimatedPrice.toLocaleString()}
-                    </p>
-                </CardFooter>
-              </Card>
+                    <CardTitle className="font-headline">{set.setName}</CardTitle>
+                    <CardDescription>{set.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow space-y-4">
+                      <h3 className="font-semibold">Items included:</h3>
+                      <div className="flex flex-wrap gap-2">
+                          {set.items.map((item, i) => (
+                              <Badge key={i} variant="secondary">{item}</Badge>
+                          ))}
+                      </div>
+                  </CardContent>
+                  <CardFooter>
+                      <p className="text-lg font-semibold text-primary">
+                          Est. Price: ${set.estimatedPrice.toLocaleString()}
+                      </p>
+                  </CardFooter>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

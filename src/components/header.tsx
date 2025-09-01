@@ -77,13 +77,15 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-6">
+      <div className="container mx-auto flex h-16 items-center px-4">
+        <div className="flex items-center gap-6 md:flex-1">
           <Link href="/" className="flex items-center gap-2">
             <Logo className="h-8 w-8" />
             <span className="font-bold text-lg font-headline">Aimhigh</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
+        </div>
+
+        <nav className="hidden md:flex items-center justify-center gap-6 text-sm flex-1">
             {navLinks.map(link => (
               <Link key={link.href} href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
                 {link.label}
@@ -94,10 +96,9 @@ export function Header() {
                 Dashboard
               </Link>
             )}
-          </nav>
-        </div>
+        </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2 flex-1 justify-end">
           <div className="relative">
             <Input type="search" placeholder="Search" className="pr-10" />
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -133,7 +134,7 @@ export function Header() {
           )}
         </div>
 
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden ml-auto flex items-center">
           {renderThemeChanger()}
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
