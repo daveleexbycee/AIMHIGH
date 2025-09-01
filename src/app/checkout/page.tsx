@@ -107,17 +107,39 @@ export default function CheckoutPage() {
                 <CardHeader>
                     <CardTitle>Payment Method</CardTitle>
                 </CardHeader>
-                <CardContent>
-                     <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                        <div className="flex items-center space-x-2 p-4 border rounded-md">
+                <CardContent className="space-y-4">
+                     <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-4">
+                        <div className="flex items-center space-x-2 p-4 border rounded-md has-[[data-state=checked]]:border-primary">
                             <RadioGroupItem value="card" id="card" />
                             <Label htmlFor="card" className="flex-1 cursor-pointer">Pay Online</Label>
                         </div>
-                        <div className="flex items-center space-x-2 p-4 border rounded-md">
+                        <div className="flex items-center space-x-2 p-4 border rounded-md has-[[data-state=checked]]:border-primary">
                             <RadioGroupItem value="delivery" id="delivery" />
                             <Label htmlFor="delivery" className="flex-1 cursor-pointer">Pay on Delivery</Label>
                         </div>
                     </RadioGroup>
+                    {paymentMethod === 'card' && (
+                        <div className="border p-4 rounded-md space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="card-name">Name on Card</Label>
+                                <Input id="card-name" placeholder="John Doe" required />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="card-number">Card Number</Label>
+                                <Input id="card-number" placeholder="•••• •••• •••• ••••" required />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="expiry-date">Expiry Date</Label>
+                                    <Input id="expiry-date" placeholder="MM/YY" required />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="cvc">CVC</Label>
+                                    <Input id="cvc" placeholder="•••" required />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
           </div>
