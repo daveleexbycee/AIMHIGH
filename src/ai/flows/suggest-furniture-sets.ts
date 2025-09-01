@@ -29,6 +29,8 @@ const SuggestFurnitureSetsOutputSchema = z.object({
       description: z.string().describe('A description of the furniture set.'),
       items: z.array(z.string()).describe('A list of items included in the set.'),
       estimatedPrice: z.number().describe('The estimated price of the set.'),
+      isExternal: z.boolean().describe('Whether the suggestion is from an external site.'),
+      externalUrl: z.string().optional().describe('The URL to an external site if the product is not in-store.'),
     })
   ).describe('A list of suggested furniture sets based on the user input.'),
 });
@@ -51,6 +53,9 @@ const prompt = ai.definePrompt({
 
   Suggest a few furniture sets that would be suitable for the user. Provide the set name, description, items in the set and the estimated price.
   Ensure that the sets fit within the specified budget and are appropriate for the room size.
+
+  First, try to suggest products available in our store. If a suitable product set is not available, you can suggest products from other e-commerce sites.
+  If you suggest from an external site, set 'isExternal' to true and provide the 'externalUrl'. For in-store items, 'isExternal' should be false.
 
   Return the output in the format specified by the output schema.`,
 });

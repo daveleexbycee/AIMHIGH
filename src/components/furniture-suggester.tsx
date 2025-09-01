@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
-import { Sparkles, Sofa, LoaderCircle } from "lucide-react";
+import { Sparkles, Sofa, LoaderCircle, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -208,12 +208,23 @@ export function FurnitureSuggester() {
         <div className="space-y-8">
           <h2 className="text-3xl font-headline text-center">Here are your AI-powered suggestions!</h2>
           <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-            {suggestions.suggestedSets.map((set, index) => (
-              <Link href={`/shop?q=${encodeURIComponent(set.setName)}`} key={index} className="block hover:shadow-lg transition-shadow duration-300 rounded-lg">
+            {suggestions.suggestedSets.map((set, index) => {
+              const Wrapper = set.isExternal ? 'a' : Link;
+              const props = set.isExternal 
+                ? { href: set.externalUrl, target: '_blank', rel: 'noopener noreferrer' } 
+                : { href: `/shop?q=${encodeURIComponent(set.setName)}` };
+
+              return (
+              <Wrapper key={index} {...props} className="block hover:shadow-lg transition-shadow duration-300 rounded-lg">
                 <Card className="flex flex-col h-full">
                   <CardHeader>
                     <div className="relative aspect-square w-full mb-4">
-                      <Image src={`https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx8ZW58MHx8fHwxNzU1NjQxMTA1fDA&ixlib=rb-4.1.0&q=80&w=1080`} alt={set.setName} fill className="rounded-md object-cover" data-ai-hint="living room furniture"/>
+                      <Image src={`https://picsum.photos/400/400?random=${index}`} alt={set.setName} fill className="rounded-md object-cover" data-ai-hint="living room furniture"/>
+                       {set.isExternal && (
+                        <Badge variant="secondary" className="absolute top-2 right-2">
+                          External Suggestion <ArrowUpRight className="ml-1 h-3 w-3" />
+                        </Badge>
+                      )}
                     </div>
                     <CardTitle className="font-headline">{set.setName}</CardTitle>
                     <CardDescription>{set.description}</CardDescription>
@@ -232,8 +243,8 @@ export function FurnitureSuggester() {
                       </p>
                   </CardFooter>
                 </Card>
-              </Link>
-            ))}
+              </Wrapper>
+            )})}
           </div>
         </div>
       )}
