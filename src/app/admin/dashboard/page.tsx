@@ -54,7 +54,7 @@ import {
                 <rect width="20" height="14" x="2" y="5" rx="2" />
                 <path d="M2 10h20" />
               </svg>
-            </CardHeader>
+            </Header>
             <CardContent>
               <div className="text-2xl font-bold">+2350</div>
               <p className="text-xs text-muted-foreground">

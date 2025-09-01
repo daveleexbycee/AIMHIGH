@@ -36,7 +36,7 @@ export default function AdminLayout({
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!loading && (!user || user.email?.toLowerCase() !== ADMIN_EMAIL)) {
+    if (!loading && (!user || user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase())) {
       toast({
         variant: "destructive",
         title: "Access Denied",
@@ -69,7 +69,7 @@ export default function AdminLayout({
     return name[0];
   };
 
-  if (loading || !user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
+  if (loading || !user || user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
     return (
         <div className="flex h-screen items-center justify-center">
             <div className="text-center">
