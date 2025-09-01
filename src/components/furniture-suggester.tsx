@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -61,7 +62,7 @@ export function FurnitureSuggester() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       stylePreferences: "Modern",
-      budget: 1500,
+      budget: 150000,
       roomSize: "Medium",
     },
   });
@@ -88,7 +89,7 @@ export function FurnitureSuggester() {
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-12 my-12">
-      <Card className="bg-card/80 backdrop-blur-sm border-2 border-dashed">
+      <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-headline flex items-center gap-2">
             <Sparkles className="text-primary" />
@@ -127,9 +128,9 @@ export function FurnitureSuggester() {
                   name="budget"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Budget ($)</FormLabel>
+                      <FormLabel>Budget (₦)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g., 1500" {...field} />
+                        <Input type="number" placeholder="e.g., 150000" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -212,7 +213,7 @@ export function FurnitureSuggester() {
                 <Card className="flex flex-col h-full">
                   <CardHeader>
                     <div className="relative aspect-square w-full mb-4">
-                      <Image src="https://placehold.co/600x400.png" alt={set.setName} fill className="rounded-md object-cover" data-ai-hint="living room furniture"/>
+                      <Image src={`https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx8ZW58MHx8fHwxNzU1NjQxMTA1fDA&ixlib=rb-4.1.0&q=80&w=1080`} alt={set.setName} fill className="rounded-md object-cover" data-ai-hint="living room furniture"/>
                     </div>
                     <CardTitle className="font-headline">{set.setName}</CardTitle>
                     <CardDescription>{set.description}</CardDescription>
@@ -227,7 +228,7 @@ export function FurnitureSuggester() {
                   </CardContent>
                   <CardFooter>
                       <p className="text-lg font-semibold text-primary">
-                          Est. Price: ${set.estimatedPrice.toLocaleString()}
+                          Est. Price: ₦{set.estimatedPrice.toLocaleString()}
                       </p>
                   </CardFooter>
                 </Card>
