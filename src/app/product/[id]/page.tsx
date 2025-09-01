@@ -30,10 +30,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const { toast } = useToast();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const { id } = params;
 
   useEffect(() => {
-    if (!params.id) return;
-    const docRef = doc(db, "products", params.id);
+    if (!id) return;
+    const docRef = doc(db, "products", id);
     const unsubscribe = onSnapshot(docRef, (doc) => {
       if (doc.exists()) {
         setProduct({ id: doc.id, ...doc.data() } as Product);
@@ -43,7 +44,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [params.id]);
+  }, [id]);
 
 
   const isWishlisted = product && wishlist.some(item => item.id === product.id);
