@@ -5,7 +5,7 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Star, Truck, ShieldCheck, ShoppingCart } from "lucide-react";
+import { Star, Truck, ShieldCheck, ShoppingCart, Heart } from "lucide-react";
 import { useCart } from "@/hooks/use-cart.tsx";
 import { useToast } from "@/hooks/use-toast";
 import { products } from "@/lib/products";
@@ -97,7 +97,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
               </Button>
-              <Button size="lg" variant="outline">Buy Now</Button>
+              <Button size="lg" variant="outline">
+                <Heart className="mr-2 h-5 w-5" />
+                Wishlist
+              </Button>
             </div>
             <div className="space-y-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-3">
