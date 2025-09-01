@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function CheckoutPage() {
   const { user, loading } = useAuth();
-  const { cart, totalPrice, clearCart } = useCart();
+  const { cart, subtotal, shippingFee, totalPrice, clearCart } = useCart();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -203,11 +203,11 @@ export default function CheckoutPage() {
                 <Separator />
                 <div className="flex justify-between">
                   <p>Subtotal</p>
-                  <p>₦{totalPrice.toFixed(2)}</p>
+                  <p>₦{subtotal.toFixed(2)}</p>
                 </div>
                 <div className="flex justify-between">
                   <p>Shipping</p>
-                  <p>Free</p>
+                  <p>{shippingFee === 0 ? 'Free' : `₦${shippingFee.toFixed(2)}`}</p>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">

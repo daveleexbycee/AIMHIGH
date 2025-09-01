@@ -12,7 +12,7 @@ import { Separator } from "./ui/separator";
 import Link from "next/link";
 
 export function CartSheet() {
-  const { cart, updateQuantity, removeFromCart, totalPrice } = useCart();
+  const { cart, updateQuantity, removeFromCart, subtotal, shippingFee, totalPrice } = useCart();
 
   return (
     <SheetContent className="flex w-full flex-col pr-0 sm:max-w-lg">
@@ -82,11 +82,11 @@ export function CartSheet() {
             <div className="w-full space-y-4">
               <div className="flex justify-between font-medium">
                 <span>Subtotal</span>
-                <span>₦{totalPrice.toFixed(2)}</span>
+                <span>₦{subtotal.toFixed(2)}</span>
               </div>
                <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Shipping</span>
-                <span>Free</span>
+                <span>{shippingFee === 0 ? 'Free' : `₦${shippingFee.toFixed(2)}`}</span>
               </div>
               <Separator />
                <div className="flex justify-between font-bold text-lg">
