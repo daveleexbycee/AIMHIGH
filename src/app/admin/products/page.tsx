@@ -28,7 +28,7 @@ import {
     DropdownMenuTrigger,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { products as initialProducts } from "@/lib/products"
 import type { Product } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -71,6 +72,8 @@ export default function AdminProductsPage() {
             image: formData.get("image") as string || "https://placehold.co/400x400.png",
             hint: (formData.get("name") as string).toLowerCase(),
             description: formData.get("description") as string,
+            category: formData.get("category") as string,
+            tag: formData.get("tag") as string,
         };
 
         if (editingProduct) {
@@ -84,7 +87,7 @@ export default function AdminProductsPage() {
         } else {
             // Add new product
             const newProduct: Product = {
-                id: Math.max(...products.map(p => p.id)) + 1,
+                id: Math.max(...products.map(p => p.id), 0) + 1,
                 ...productData,
                 rating: 0,
                 reviews: [],
@@ -99,13 +102,18 @@ export default function AdminProductsPage() {
         setIsDrawerOpen(false);
         setEditingProduct(null);
     };
+    
+    const stockStatus = (product: Product) => {
+      // a mock stock status
+      return "In Stock";
+    }
 
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                     <CardTitle>Products</CardTitle>
-                    <CardDescription>Manage your products here.</CardDescription>
+                    <CardDescription>Manage your products, view their sales performance and edit them.</CardDescription>
                 </div>
                 <Button onClick={openAddDrawer}>
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -118,6 +126,7 @@ export default function AdminProductsPage() {
                         <TableRow>
                             <TableHead>Image</TableHead>
                             <TableHead>Name</TableHead>
+                            <TableHead>Category</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Price</TableHead>
                             <TableHead>Actions</TableHead>
@@ -130,7 +139,8 @@ export default function AdminProductsPage() {
                                     <img src={product.image} alt={product.name} className="h-10 w-10 object-cover rounded-md" />
                                 </TableCell>
                                 <TableCell className="font-medium">{product.name}</TableCell>
-                                <TableCell><Badge>In Stock</Badge></TableCell>
+                                <TableCell>{product.category}</TableCell>
+                                <TableCell><Badge>{stockStatus(product)}</Badge></TableCell>
                                 <TableCell>
                                     {product.originalPrice && <span className="text-muted-foreground line-through mr-2">${product.originalPrice.toFixed(2)}</span>}
                                     ${product.price.toFixed(2)}
@@ -181,19 +191,39 @@ export default function AdminProductsPage() {
                             {editingProduct ? "Update the details for this product." : "Fill in the details below to add a new product."}
                         </DrawerDescription>
                     </DrawerHeader>
-                    <form onSubmit={handleFormSubmit} className="px-4 space-y-4">
+                    <form onSubmit={handleFormSubmit} className="px-4 space-y-4 max-h-[80vh] overflow-y-auto">
                         <div className="space-y-2">
                             <Label htmlFor="name">Product Name</Label>
                             <Input id="name" name="name" defaultValue={editingProduct?.name} required />
                         </div>
+                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                             <div className="space-y-2">
+                                <Label htmlFor="category">Category</Label>
+                                <Input id="category" name="category" defaultValue={editingProduct?.category} placeholder="e.g. Furniture"/>
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="tag">Tag</Label>
+                                <Select name="tag" defaultValue={editingProduct?.tag}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a tag" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="None">None</SelectItem>
+                                        <SelectItem value="New">New</SelectItem>
+                                        <SelectItem value="Hot">Hot</SelectItem>
+                                        <SelectItem value="Sale">Sale</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="price">Price</Label>
+                                <Label htmlFor="price">Price ($)</Label>
                                 <Input id="price" name="price" type="number" step="0.01" defaultValue={editingProduct?.price} required />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="originalPrice">Original Price (for sales)</Label>
-                                <Input id="originalPrice" name="originalPrice" type="number" step="0.01" defaultValue={editingProduct?.originalPrice} />
+                                <Label htmlFor="originalPrice">Original Price ($)</Label>
+                                <Input id="originalPrice" name="originalPrice" type="number" step="0.01" defaultValue={editingProduct?.originalPrice} placeholder="For sales/discounts"/>
                             </div>
                         </div>
                         <div className="space-y-2">

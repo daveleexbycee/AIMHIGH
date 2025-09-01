@@ -15,7 +15,8 @@ export const products: Product[] = [
     reviews: [
         { id: 1, user: "Alice", avatar: "https://i.pravatar.cc/150?u=alice", rating: 5, comment: "Absolutely stunning! Looks even better in person." },
         { id: 2, user: "Bob", avatar: "https://i.pravatar.cc/150?u=bob", rating: 4, comment: "Great quality, but a little smaller than I expected." }
-    ]
+    ],
+    category: "Decor"
   },
   { 
     id: 2, 
@@ -29,7 +30,8 @@ export const products: Product[] = [
     reviews: [
         { id: 3, user: "Charlie", avatar: "https://i.pravatar.cc/150?u=charlie", rating: 5, comment: "Perfect height and very sturdy. I use it as a plant stand." },
         { id: 4, user: "Diana", avatar: "https://i.pravatar.cc/150?u=diana", rating: 4, comment: "Love the natural wood grain." }
-    ]
+    ],
+    category: "Furniture"
   },
   { 
     id: 3, 
@@ -41,7 +43,8 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: [
         { id: 5, user: "Eve", avatar: "https://i.pravatar.cc/150?u=eve", rating: 5, comment: "This vase is a work of art. So beautiful!" }
-    ]
+    ],
+    category: "Decor"
   },
   { 
     id: 4, 
@@ -54,7 +57,8 @@ export const products: Product[] = [
     reviews: [
         { id: 6, user: "Frank", avatar: "https://i.pravatar.cc/150?u=frank", rating: 5, comment: "Gives off a lovely warm light. Perfect for my bedside table." },
         { id: 7, user: "Grace", avatar: "https://i.pravatar.cc/150?u=grace", rating: 4, comment: "Looks great, but the switch is a bit fiddly." }
-    ]
+    ],
+    category: "Lighting"
   },
   { 
     id: 5, 
@@ -69,7 +73,8 @@ export const products: Product[] = [
     reviews: [
         { id: 8, user: "Heidi", avatar: "https://i.pravatar.cc/150?u=heidi", rating: 5, comment: "Stylish and surprisingly comfortable." },
         { id: 9, user: "Ivan", avatar: "https://i.pravatar.cc/150?u=ivan", rating: 4, comment: "A bit tricky to assemble, but looks great once it's done." }
-    ]
+    ],
+    category: "Furniture"
   },
   { 
     id: 6, 
@@ -81,7 +86,8 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: [
         { id: 10, user: "Judy", avatar: "https://i.pravatar.cc/150?u=judy", rating: 5, comment: "I love this coffee table! It's the perfect size and looks so chic." }
-    ]
+    ],
+    category: "Furniture"
   },
   { 
     id: 7, 
@@ -93,7 +99,8 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: [
         { id: 11, user: "Kevin", avatar: "https://i.pravatar.cc/150?u=kevin", rating: 5, comment: "So comfortable, I never want to get up!" }
-    ]
+    ],
+    category: "Furniture"
   },
   { 
     id: 8, 
@@ -105,7 +112,8 @@ export const products: Product[] = [
     rating: 4.7,
     reviews: [
         { id: 12, user: "Linda", avatar: "https://i.pravatar.cc/150?u=linda", rating: 5, comment: "Easy to assemble and looks fantastic in my office." }
-    ]
+    ],
+    category: "Furniture"
   },
   {
     id: 9,
@@ -118,6 +126,7 @@ export const products: Product[] = [
     reviews: [
       { id: 13, user: 'Mike', avatar: 'https://i.pravatar.cc/150?u=mike', rating: 5, comment: 'Great little table, fits perfectly in my bedroom.' },
     ],
+    category: "Furniture"
   },
   {
     id: 10,
@@ -131,6 +140,7 @@ export const products: Product[] = [
       { id: 14, user: 'Nancy', avatar: 'https://i.pravatar.cc/150?u=nancy', rating: 4, comment: 'Solid and looks great, but the instructions were a bit unclear.' },
       { id: 15, user: 'Oscar', avatar: 'https://i.pravatar.cc/150?u=oscar', rating: 5, comment: 'Exactly what I was looking for. Holds my large TV with no problem.' },
     ],
+    category: "Furniture"
   },
   {
     id: 11,
@@ -143,6 +153,7 @@ export const products: Product[] = [
     reviews: [
       { id: 16, user: 'Pam', avatar: 'https://i.pravatar.cc/150?u=pam', rating: 5, comment: 'These chairs are so elegant and comfortable. I bought four!' },
     ],
+    category: "Furniture"
   },
   {
     id: 12,
@@ -157,7 +168,8 @@ export const products: Product[] = [
     reviews: [
         { id: 17, user: "Quincy", avatar: "https://i.pravatar.cc/150?u=quincy", rating: 5, comment: "Fantastic sofa for the price. Very comfortable and looks high-end." },
         { id: 18, user: "Rita", avatar: "https://i.pravatar.cc/150?u=rita", rating: 4, comment: "The leather is a bit darker than in the pictures, but still beautiful." }
-    ]
+    ],
+    category: "Furniture"
   },
 ];
 
