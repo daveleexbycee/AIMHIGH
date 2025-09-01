@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { addReview } from "@/lib/firestore";
 import { Product } from "@/hooks/use-cart";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
@@ -30,10 +31,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const { toast } = useToast();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { id } = params;
 
   useEffect(() => {
     if (!id) return;
+    setLoading(true);
     const docRef = doc(db, "products", id);
     const unsubscribe = onSnapshot(docRef, (doc) => {
       if (doc.exists()) {
@@ -72,9 +75,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   }
   
   const totalReviews = product.reviews?.length || 0;
-  const averageRating = totalReviews > 0 
-    ? product.reviews!.reduce((acc, review) => acc + review.rating, 0) / totalReviews
-    : 0;
+  
+  // Use the rating from the product data, not a locally calculated one
+  const averageRating = product.rating || 0;
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -100,16 +103,29 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     }
   };
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (rating === 0 || !comment) {
+    if (rating === 0 || !comment || !user) {
         toast({ variant: "destructive", title: "Please provide a rating and a comment." });
         return;
     }
-    // In a real app, you would submit this to your backend
-    toast({ title: "Review submitted!", description: "Thank you for your feedback." });
-    setRating(0);
-    setComment("");
+    setIsSubmitting(true);
+    try {
+        await addReview(product.id, {
+            userId: user.uid,
+            user: user.displayName || "Anonymous",
+            rating,
+            comment,
+        });
+        toast({ title: "Review submitted!", description: "Thank you for your feedback." });
+        setRating(0);
+        setComment("");
+    } catch (error) {
+        console.error("Failed to submit review:", error);
+        toast({ variant: "destructive", title: "Failed to submit review. Please try again." });
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
 
@@ -216,7 +232,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                                     <Label htmlFor="comment">Your Review</Label>
                                     <Textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Share your thoughts..." required/>
                                  </div>
-                                <Button type="submit">Submit Review</Button>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? "Submitting..." : "Submit Review"}
+                                </Button>
                             </form>
                         ) : (
                             <p className="text-muted-foreground">

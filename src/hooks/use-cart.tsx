@@ -5,8 +5,9 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { NIGERIA_STATES, State } from "@/lib/nigeria-data";
 
 export interface Review {
-    id: number;
-    user: string;
+    id: string; // Unique ID for the review
+    userId: string; // ID of the user who wrote the review
+    user: string; // Display name of the user
     avatar: string;
     rating: number;
     comment: string;
