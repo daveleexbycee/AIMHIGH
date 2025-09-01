@@ -74,7 +74,8 @@ export default function AdminProductsPage() {
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const productData = {
+        
+        const productData: Omit<Product, 'id'> = {
             name: formData.get("name") as string,
             price: parseFloat(formData.get("price") as string),
             originalPrice: formData.get("originalPrice") ? parseFloat(formData.get("originalPrice") as string) : undefined,
@@ -90,15 +91,18 @@ export default function AdminProductsPage() {
         try {
             if (editingProduct) {
                 // Update existing product
-                const updatedProduct = { ...editingProduct, ...productData };
-                await updateProduct(editingProduct.id, updatedProduct);
+                await updateProduct(editingProduct.id, productData);
                  toast({
                     title: "Product Updated",
-                    description: `${updatedProduct.name} has been updated.`,
+                    description: `${productData.name} has been updated.`,
                 });
             } else {
-                // Add new product
-                await addProduct(productData);
+                // Add new product with default rating and reviews
+                await addProduct({
+                    ...productData,
+                    rating: 0,
+                    reviews: [],
+                });
                  toast({
                     title: "Product Added",
                     description: `${productData.name} has been added to your store.`,
