@@ -31,27 +31,27 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Shop</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="/shop" className="hover:text-primary">All Products</Link></li>
-              <li><Link href="#" className="hover:text-primary">New Arrivals</Link></li>
-              <li><Link href="#" className="hover:text-primary">Best Sellers</Link></li>
-              <li><Link href="#" className="hover:text-primary">Sale</Link></li>
+              <li><Link href="/shop?tag=New" className="hover:text-primary">New Arrivals</Link></li>
+              <li><Link href="/shop?tag=Hot" className="hover:text-primary">Best Sellers</Link></li>
+              <li><Link href="/shop?tag=Sale" className="hover:text-primary">Sale</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold mb-4">About Us</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="hover:text-primary">Our Story</Link></li>
+              <li><Link href="/about" className="hover:text-primary">Our Story</Link></li>
               <li><Link href="/contact" className="hover:text-primary">Contact Us</Link></li>
-              <li><Link href="#" className="hover:text-primary">Careers</Link></li>
-              <li><Link href="#" className="hover:text-primary">Press</Link></li>
+              <li><Link href="/careers" className="hover:text-primary">Careers</Link></li>
+              <li><Link href="/press" className="hover:text-primary">Press</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="hover:text-primary">FAQ</Link></li>
-              <li><Link href="#" className="hover:text-primary">Shipping & Returns</Link></li>
+              <li><Link href="/faq" className="hover:text-primary">FAQ</Link></li>
+              <li><Link href="/shipping-returns" className="hover:text-primary">Shipping & Returns</Link></li>
               <li><Link href="/track-order" className="hover:text-primary">Track Order</Link></li>
-              <li><Link href="#" className="hover:text-primary">Privacy Policy</Link></li>
+              <li><Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>
