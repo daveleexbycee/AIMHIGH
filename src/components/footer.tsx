@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Logo } from '@/components/ui/logo';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
@@ -49,7 +50,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="#" className="hover:text-primary">FAQ</Link></li>
               <li><Link href="#" className="hover:text-primary">Shipping & Returns</Link></li>
-              <li><Link href="#" className="hovertext-primary">Track Order</Link></li>
+              <li><Link href="/track-order" className="hover:text-primary">Track Order</Link></li>
               <li><Link href="#" className="hover:text-primary">Privacy Policy</Link></li>
             </ul>
           </div>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -5,7 +6,7 @@ import { useCart } from "@/hooks/use-cart.tsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
+import { SheetContent, SheetHeader, SheetTitle, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
 import { Separator } from "./ui/separator";
 import Link from "next/link";
@@ -92,9 +93,11 @@ export function CartSheet() {
                 <span>Total</span>
                 <span>${totalPrice.toFixed(2)}</span>
               </div>
-              <Button className="w-full" size="lg">
-                Proceed to Checkout
-              </Button>
+              <SheetClose asChild>
+                <Button className="w-full" size="lg" asChild>
+                  <Link href="/checkout">Proceed to Checkout</Link>
+                </Button>
+              </SheetClose>
             </div>
           </SheetFooter>
         </>
@@ -103,9 +106,11 @@ export function CartSheet() {
             <ShoppingCart className="h-16 w-16 text-muted-foreground" />
             <h3 className="text-xl font-semibold">Your cart is empty</h3>
             <p className="text-muted-foreground">Add some items to get started.</p>
-            <Button asChild>
-                <Link href="/shop">Continue Shopping</Link>
-            </Button>
+            <SheetClose asChild>
+                <Button asChild>
+                    <Link href="/shop">Continue Shopping</Link>
+                </Button>
+            </SheetClose>
         </div>
       )}
     </SheetContent>
