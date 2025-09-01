@@ -7,13 +7,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart, Product } from "@/hooks/use-cart.tsx";
+import { useCart, Product } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart, Star, Heart, GitCompareArrows } from "lucide-react";
 import { products } from "@/lib/products";
 
 export default function ShopPage() {
   const { addToCart } = useCart();
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { toast } = useToast();
 
   const handleAddToCart = (product: Product) => {
@@ -24,14 +26,33 @@ export default function ShopPage() {
     });
   };
 
+  const handleWishlistToggle = (product: Product) => {
+    const isWishlisted = wishlist.some(item => item.id === product.id);
+    if (isWishlisted) {
+      removeFromWishlist(product.id);
+      toast({
+        title: "Removed from wishlist",
+        description: `${product.name} has been removed from your wishlist.`
+      });
+    } else {
+      addToWishlist(product);
+      toast({
+        title: "Added to wishlist!",
+        description: `${product.name} has been added to your wishlist.`
+      });
+    }
+  };
+
   return (
     <>
       <Header />
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold font-headline mb-8">Shop All Products</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {products.map((product) => (
-             <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
+          {products.map((product) => {
+            const isWishlisted = wishlist.some(item => item.id === product.id);
+            return (
+              <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
               <div className="relative">
                 <Link href={`/product/${product.id}`} className="block">
                   <Image 
@@ -47,8 +68,8 @@ export default function ShopPage() {
                     <Badge className="absolute top-3 left-3" variant={product.tag === 'Hot' ? 'destructive' : 'secondary'}>{product.tag}</Badge>
                 )}
                  <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full">
-                        <Heart className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full" onClick={() => handleWishlistToggle(product)}>
+                        <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
                     </Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full">
                         <GitCompareArrows className="h-4 w-4" />
@@ -77,10 +98,10 @@ export default function ShopPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            )
+          })}
         </div>
       </main>
     </>
   );
 }
-

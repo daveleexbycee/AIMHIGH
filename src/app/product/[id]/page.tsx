@@ -6,14 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Star, Truck, ShieldCheck, ShoppingCart, Heart } from "lucide-react";
-import { useCart } from "@/hooks/use-cart.tsx";
+import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
 import { products } from "@/lib/products";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const product = products.find(p => p.id === parseInt(params.id));
   const { addToCart } = useCart();
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { toast } = useToast();
+
+  const isWishlisted = product && wishlist.some(item => item.id === product.id);
 
   if (!product) {
     return (
@@ -32,6 +36,22 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       title: "Added to cart!",
       description: `${product.name} has been added to your cart.`,
     });
+  };
+
+  const handleWishlistToggle = () => {
+    if (isWishlisted) {
+        removeFromWishlist(product.id);
+        toast({
+            title: "Removed from wishlist",
+            description: `${product.name} has been removed from your wishlist.`
+        });
+    } else {
+        addToWishlist(product);
+        toast({
+            title: "Added to wishlist!",
+            description: `${product.name} has been added to your wishlist.`
+        });
+    }
   };
 
   const renderStars = () => {
@@ -97,9 +117,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
               </Button>
-              <Button size="lg" variant="outline">
-                <Heart className="mr-2 h-5 w-5" />
-                Wishlist
+              <Button size="lg" variant="outline" onClick={handleWishlistToggle}>
+                <Heart className={`mr-2 h-5 w-5 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
+                {isWishlisted ? 'Wishlisted' : 'Wishlist'}
               </Button>
             </div>
             <div className="space-y-4 text-sm text-muted-foreground">
