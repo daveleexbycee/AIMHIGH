@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCart, Product } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Star, Heart, GitCompareArrows } from "lucide-react";
+import { ShoppingCart, Star, Heart, GitCompareArrows, SlidersHorizontal, ArrowRight } from "lucide-react";
 import { products } from "@/lib/products";
 
 export function ProductList() {
@@ -46,18 +46,12 @@ export function ProductList() {
     <section>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold font-headline">Our Products</h2>
-        <div className="flex items-center gap-4 text-sm">
-          <Button variant="ghost" asChild>
-            <Link href="/shop">View All</Link>
-          </Button>
-          <div className="hidden md:flex items-center gap-2">
-            <Button variant="outline" size="sm">Filter</Button>
-            <Button variant="outline" size="sm">Sort</Button>
-          </div>
-        </div>
+        <Button variant="ghost" asChild>
+            <Link href="/shop">View All <ArrowRight className="ml-2 h-4 w-4" /></Link>
+        </Button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.slice(0, 4).map((product) => {
+        {products.slice(0, 8).map((product) => {
           const isWishlisted = wishlist.some(item => item.id === product.id);
           const totalReviews = product.reviews?.length || 0;
           return (
@@ -113,5 +107,7 @@ export function ProductList() {
     </section>
   );
 }
+
+    
 
     

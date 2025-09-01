@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import { useAuth } from "@/hooks/use-auth";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
@@ -28,6 +29,7 @@ export function Header() {
   const { cart } = useCart();
   const { wishlist } = useWishlist();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const router = useRouter();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -38,6 +40,17 @@ export function Header() {
   useEffect(() => {
     setMounted(true);
   }, []);
+  
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const searchQuery = formData.get("search") as string;
+    if (searchQuery.trim()) {
+        router.push(`/shop?q=${encodeURIComponent(searchQuery)}`);
+    } else {
+        router.push('/shop');
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -101,10 +114,12 @@ export function Header() {
         </nav>
 
         <div className="hidden md:flex items-center gap-2 flex-1 justify-end">
-          <div className="relative">
-            <Input type="search" placeholder="Search" className="pr-10" />
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          </div>
+          <form onSubmit={handleSearch} className="relative">
+            <Input name="search" type="search" placeholder="Search" className="pr-10" />
+            <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0 h-full w-10">
+                <Search className="h-5 w-5 text-muted-foreground" />
+            </Button>
+          </form>
           {renderThemeChanger()}
           <Button variant="ghost" size="icon" className="relative" asChild>
             <Link href="/wishlist">
@@ -196,10 +211,12 @@ export function Header() {
                     )}
                 </nav>
                 <div className="flex flex-col gap-4 mt-auto">
-                    <div className="relative">
-                        <Input type="search" placeholder="Search" className="pr-10" />
-                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    </div>
+                    <form onSubmit={handleSearch} className="relative">
+                        <Input name="search" type="search" placeholder="Search" className="pr-10" />
+                        <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0 h-full w-10">
+                            <Search className="h-5 w-5 text-muted-foreground" />
+                        </Button>
+                    </form>
                     {user ? (
                         <>
                          <div className="flex items-center gap-2">
@@ -228,3 +245,5 @@ export function Header() {
     </header>
   );
 }
+
+    

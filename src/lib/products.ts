@@ -107,6 +107,58 @@ export const products: Product[] = [
         { id: 12, user: "Linda", avatar: "https://i.pravatar.cc/150?u=linda", rating: 5, comment: "Easy to assemble and looks fantastic in my office." }
     ]
   },
+  {
+    id: 9,
+    name: 'Nordic Nightstand',
+    price: 95,
+    image: 'https://images.unsplash.com/photo-1594224978135-c895cee65230?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuaWdodHN0YW5kfGVufDB8fHx8fDE3ODAzMzUzNTd8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    hint: 'bedside table',
+    description: 'A sleek Nordic-style nightstand with a single drawer, offering a simple yet elegant storage solution.',
+    rating: 4.9,
+    reviews: [
+      { id: 13, user: 'Mike', avatar: 'https://i.pravatar.cc/150?u=mike', rating: 5, comment: 'Great little table, fits perfectly in my bedroom.' },
+    ],
+  },
+  {
+    id: 10,
+    name: 'Industrial TV Stand',
+    price: 280,
+    image: 'https://images.unsplash.com/photo-1604116318723-73d758993f49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxUViUyMHN0YW5kfGVufDB8fHx8fDE3ODAzMzU0MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    hint: 'television stand',
+    description: 'A sturdy TV stand with a rustic wood finish and metal frame, perfect for an industrial-style living room.',
+    rating: 4.6,
+    reviews: [
+      { id: 14, user: 'Nancy', avatar: 'https://i.pravatar.cc/150?u=nancy', rating: 4, comment: 'Solid and looks great, but the instructions were a bit unclear.' },
+      { id: 15, user: 'Oscar', avatar: 'https://i.pravatar.cc/150?u=oscar', rating: 5, comment: 'Exactly what I was looking for. Holds my large TV with no problem.' },
+    ],
+  },
+  {
+    id: 11,
+    name: 'Velvet Dining Chair',
+    price: 110,
+    image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkaW5pbmclMjBjaGFpcnxlbnwwfHx8fDE3ODAzMzU0NjR8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    hint: 'dining chair',
+    description: 'A luxurious velvet dining chair with gold-finished legs, adding a touch of glamour to any dining space.',
+    rating: 4.8,
+    reviews: [
+      { id: 16, user: 'Pam', avatar: 'https://i.pravatar.cc/150?u=pam', rating: 5, comment: 'These chairs are so elegant and comfortable. I bought four!' },
+    ],
+  },
+  {
+    id: 12,
+    name: 'Leather Sofa',
+    price: 499,
+    originalPrice: 600,
+    image: 'https://images.unsplash.com/photo-1540574163024-57216b8b6b58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsZWF0aGVyJTIwc29mYXxlbnwwfHx8fDE3ODAzMzU1MTB8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    hint: 'leather sofa',
+    tag: 'Sale',
+    description: 'A classic leather sofa that combines timeless style with exceptional comfort. Perfect for any living room.',
+    rating: 4.7,
+    reviews: [
+        { id: 17, user: "Quincy", avatar: "https://i.pravatar.cc/150?u=quincy", rating: 5, comment: "Fantastic sofa for the price. Very comfortable and looks high-end." },
+        { id: 18, user: "Rita", avatar: "https://i.pravatar.cc/150?u=rita", rating: 4, comment: "The leather is a bit darker than in the pictures, but still beautiful." }
+    ]
+  },
 ];
 
     
