@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // In a real app, you would handle payment processing here.
-    const orderId = `AIM-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const orderId = `AIMHIGH-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     clearCart();
     router.push(`/order-confirmation/${orderId}`);
   };
@@ -191,4 +191,3 @@ export default function CheckoutPage() {
     </>
   );
 }
-
