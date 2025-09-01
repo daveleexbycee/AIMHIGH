@@ -30,6 +30,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { updateOrderStatus } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
+import { AdminSalesChart } from "@/components/admin-sales-chart";
 
 export default function AdminDashboard() {
   const { orders, loading: ordersLoading } = useOrders();
@@ -56,16 +57,16 @@ export default function AdminDashboard() {
     return <div>Loading dashboard data...</div>
   }
   
-  const totalRevenue = orders
-    .filter(order => order.status === 'Fulfilled')
-    .reduce((sum, order) => sum + order.total, 0);
+  const fulfilledOrders = orders.filter(order => order.status === 'Fulfilled');
 
-  const totalSales = orders.filter(order => order.status === 'Fulfilled').length;
+  const totalRevenue = fulfilledOrders.reduce((sum, order) => sum + order.total, 0);
+
+  const totalSales = fulfilledOrders.length;
 
   const recentOrders = orders.slice(0, 5);
 
     return (
-      <div>
+      <div className="space-y-8">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -108,7 +109,10 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
-        <Card className="mt-8">
+        
+        <AdminSalesChart orders={fulfilledOrders} />
+
+        <Card>
             <CardHeader>
                 <CardTitle>Recent Orders</CardTitle>
                 <CardDescription>A list of the 5 most recent orders from your store.</CardDescription>
