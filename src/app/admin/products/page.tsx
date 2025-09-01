@@ -33,13 +33,14 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { products as initialProducts } from "@/lib/products"
+import { useProducts } from "@/hooks/use-products"
 import type { Product } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { addProduct, updateProduct, deleteProduct } from "@/lib/firestore"
 
 export default function AdminProductsPage() {
-    const [products, setProducts] = useState<Product[]>(initialProducts);
+    const { products, loading } = useProducts();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const { toast } = useToast();
@@ -54,15 +55,23 @@ export default function AdminProductsPage() {
         setIsDrawerOpen(true);
     };
 
-    const handleDeleteProduct = (productId: number) => {
-        setProducts(prev => prev.filter(p => p.id !== productId));
-        toast({
-            title: "Product Deleted",
-            description: "The product has been successfully removed.",
-        });
+    const handleDeleteProduct = async (productId: string) => {
+        try {
+            await deleteProduct(productId);
+            toast({
+                title: "Product Deleted",
+                description: "The product has been successfully removed.",
+            });
+        } catch (error) {
+             toast({
+                variant: "destructive",
+                title: "Error Deleting Product",
+                description: "There was a problem deleting the product.",
+            });
+        }
     };
 
-    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const productData = {
@@ -74,38 +83,45 @@ export default function AdminProductsPage() {
             description: formData.get("description") as string,
             category: formData.get("category") as string,
             tag: formData.get("tag") as string,
+            rating: editingProduct?.rating || 0,
+            reviews: editingProduct?.reviews || [],
         };
 
-        if (editingProduct) {
-            // Update existing product
-            const updatedProduct: Product = { ...editingProduct, ...productData };
-            setProducts(prev => prev.map(p => p.id === editingProduct.id ? updatedProduct : p));
+        try {
+            if (editingProduct) {
+                // Update existing product
+                const updatedProduct = { ...editingProduct, ...productData };
+                await updateProduct(editingProduct.id, updatedProduct);
+                 toast({
+                    title: "Product Updated",
+                    description: `${updatedProduct.name} has been updated.`,
+                });
+            } else {
+                // Add new product
+                await addProduct(productData);
+                 toast({
+                    title: "Product Added",
+                    description: `${productData.name} has been added to your store.`,
+                });
+            }
+            setIsDrawerOpen(false);
+            setEditingProduct(null);
+        } catch (error) {
              toast({
-                title: "Product Updated",
-                description: `${updatedProduct.name} has been updated.`,
-            });
-        } else {
-            // Add new product
-            const newProduct: Product = {
-                id: Math.max(...products.map(p => p.id), 0) + 1,
-                ...productData,
-                rating: 0,
-                reviews: [],
-            };
-            setProducts(prev => [...prev, newProduct]);
-             toast({
-                title: "Product Added",
-                description: `${newProduct.name} has been added to your store.`,
+                variant: "destructive",
+                title: `Error ${editingProduct ? "Updating" : "Adding"} Product`,
+                description: `There was a problem ${editingProduct ? "updating" : "adding"} the product.`,
             });
         }
-
-        setIsDrawerOpen(false);
-        setEditingProduct(null);
     };
     
     const stockStatus = (product: Product) => {
       // a mock stock status
       return "In Stock";
+    }
+
+    if (loading) {
+        return <div>Loading products...</div>
     }
 
     return (
@@ -142,8 +158,8 @@ export default function AdminProductsPage() {
                                 <TableCell>{product.category}</TableCell>
                                 <TableCell><Badge>{stockStatus(product)}</Badge></TableCell>
                                 <TableCell>
-                                    {product.originalPrice && <span className="text-muted-foreground line-through mr-2">${product.originalPrice.toFixed(2)}</span>}
-                                    ${product.price.toFixed(2)}
+                                    {product.originalPrice && <span className="text-muted-foreground line-through mr-2">₦{product.originalPrice.toFixed(2)}</span>}
+                                    ₦{product.price.toFixed(2)}
                                 </TableCell>
                                 <TableCell>
                                     <DropdownMenu>
@@ -218,11 +234,11 @@ export default function AdminProductsPage() {
                          </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="price">Price ($)</Label>
+                                <Label htmlFor="price">Price (₦)</Label>
                                 <Input id="price" name="price" type="number" step="0.01" defaultValue={editingProduct?.price} required />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="originalPrice">Original Price ($)</Label>
+                                <Label htmlFor="originalPrice">Original Price (₦)</Label>
                                 <Input id="originalPrice" name="originalPrice" type="number" step="0.01" defaultValue={editingProduct?.originalPrice} placeholder="For sales/discounts"/>
                             </div>
                         </div>

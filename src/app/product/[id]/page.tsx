@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,16 +11,19 @@ import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { products } from "@/lib/products";
 import { StarRating } from "@/components/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firestore";
+import { Product } from "@/hooks/use-cart";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
-  const product = products.find(p => p.id === parseInt(params.id));
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { user } = useAuth();
@@ -28,7 +31,33 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
+  useEffect(() => {
+    if (!params.id) return;
+    const docRef = doc(db, "products", params.id);
+    const unsubscribe = onSnapshot(docRef, (doc) => {
+      if (doc.exists()) {
+        setProduct({ id: doc.id, ...doc.data() } as Product);
+      } else {
+        setProduct(null);
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [params.id]);
+
+
   const isWishlisted = product && wishlist.some(item => item.id === product.id);
+  
+  if (loading) {
+      return (
+           <>
+            <Header />
+            <main className="container mx-auto px-4 py-8 text-center">
+                <h1 className="text-2xl font-bold">Loading...</h1>
+            </main>
+           </>
+      )
+  }
 
   if (!product) {
     return (
@@ -113,9 +142,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </div>
             <div className="flex items-center gap-4 mb-6">
                 {product.originalPrice && (
-                    <p className="text-xl text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</p>
+                    <p className="text-xl text-muted-foreground line-through">₦{product.originalPrice.toFixed(2)}</p>
                 )}
-                <p className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-primary">₦{product.price.toFixed(2)}</p>
             </div>
             <p className="text-muted-foreground mb-6">{product.description}</p>
             <div className="flex items-center gap-4 mb-8">
@@ -131,7 +160,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div className="space-y-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-3">
                 <Truck className="w-5 h-5 text-primary" />
-                <span>Free shipping on orders over $50</span>
+                <span>Free shipping on orders over ₦50</span>
               </div>
               <div className="flex items-center gap-3">
                 <ShieldCheck className="w-5 h-5 text-primary" />
@@ -201,5 +230,3 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     </>
   );
 }
-
-    

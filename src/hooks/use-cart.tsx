@@ -11,7 +11,7 @@ export interface Review {
     comment: string;
 }
 export interface Product {
-  id: number;
+  id: string; // Changed to string to match Firestore document ID
   name: string;
   price: number;
   originalPrice?: number;
@@ -31,8 +31,8 @@ export interface CartItem extends Product {
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: Product) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   totalPrice: number;
 }
@@ -74,11 +74,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = (productId: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
   };
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = (productId: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(productId);
       return;
@@ -110,5 +110,3 @@ export const useCart = () => {
   }
   return context;
 };
-
-    

@@ -36,7 +36,7 @@ export function CartSheet() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-medium">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground">${item.price}</p>
+                    <p className="text-sm text-muted-foreground">₦{item.price}</p>
                     <div className="mt-2 flex items-center">
                       <Button
                         variant="outline"
@@ -64,7 +64,7 @@ export function CartSheet() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-medium">₦{(item.price * item.quantity).toFixed(2)}</p>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -82,7 +82,7 @@ export function CartSheet() {
             <div className="w-full space-y-4">
               <div className="flex justify-between font-medium">
                 <span>Subtotal</span>
-                <span>${totalPrice.toFixed(2)}</span>
+                <span>₦{totalPrice.toFixed(2)}</span>
               </div>
                <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Shipping</span>
@@ -91,7 +91,7 @@ export function CartSheet() {
               <Separator />
                <div className="flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span>${totalPrice.toFixed(2)}</span>
+                <span>₦{totalPrice.toFixed(2)}</span>
               </div>
               <SheetClose asChild>
                 <Button className="w-full" size="lg" asChild>

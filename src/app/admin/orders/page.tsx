@@ -41,7 +41,7 @@ export default function AdminOrdersPage() {
                             </TableCell>
                             <TableCell>2023-08-15</TableCell>
                             <TableCell><Badge>Fulfilled</Badge></TableCell>
-                            <TableCell className="text-right">$250.00</TableCell>
+                            <TableCell className="text-right">₦250.00</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>
@@ -50,7 +50,7 @@ export default function AdminOrdersPage() {
                             </TableCell>
                             <TableCell>2023-08-14</TableCell>
                             <TableCell><Badge variant="secondary">Shipped</Badge></TableCell>
-                            <TableCell className="text-right">$150.00</TableCell>
+                            <TableCell className="text-right">₦150.00</TableCell>
                         </TableRow>
                          <TableRow>
                             <TableCell>
@@ -59,7 +59,7 @@ export default function AdminOrdersPage() {
                             </TableCell>
                             <TableCell>2023-08-13</TableCell>
                             <TableCell><Badge variant="outline">Pending</Badge></TableCell>
-                            <TableCell className="text-right">$350.00</TableCell>
+                            <TableCell className="text-right">₦350.00</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>
@@ -68,7 +68,7 @@ export default function AdminOrdersPage() {
                             </TableCell>
                             <TableCell>2023-08-12</TableCell>
                             <TableCell><Badge>Fulfilled</Badge></TableCell>
-                            <TableCell className="text-right">$450.00</TableCell>
+                            <TableCell className="text-right">₦450.00</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

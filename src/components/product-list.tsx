@@ -9,13 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { useCart, Product } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Star, Heart, GitCompareArrows, SlidersHorizontal, ArrowRight } from "lucide-react";
-import { products } from "@/lib/products";
+import { ShoppingCart, Star, Heart, GitCompareArrows, ArrowRight } from "lucide-react";
+import { useProducts } from "@/hooks/use-products";
 
 export function ProductList() {
   const { addToCart } = useCart();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { toast } = useToast();
+  const { products, loading } = useProducts();
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
@@ -41,6 +42,10 @@ export function ProductList() {
       });
     }
   };
+  
+  if (loading) {
+      return <div>Loading products...</div>
+  }
 
   return (
     <section>
@@ -54,6 +59,9 @@ export function ProductList() {
         {products.slice(0, 8).map((product) => {
           const isWishlisted = wishlist.some(item => item.id === product.id);
           const totalReviews = product.reviews?.length || 0;
+           const averageRating = totalReviews > 0
+            ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews
+            : 0;
           return (
            <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
               <div className="relative">
@@ -85,15 +93,15 @@ export function ProductList() {
                 </Link>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span>{product.rating.toFixed(1)}</span>
+                  <span>{averageRating.toFixed(1)}</span>
                   <span>({totalReviews} reviews)</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <div>
                     {product.originalPrice && (
-                      <p className="text-xs text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</p>
+                      <p className="text-xs text-muted-foreground line-through">₦{product.originalPrice.toFixed(2)}</p>
                     )}
-                    <p className="font-bold text-primary text-lg">${product.price.toFixed(2)}</p>
+                    <p className="font-bold text-primary text-lg">₦{product.price.toFixed(2)}</p>
                   </div>
                   <Button variant="outline" size="icon" className="h-9 w-9 rounded-full" onClick={() => handleAddToCart(product)}>
                     <ShoppingCart className="h-4 w-4" />
@@ -107,7 +115,3 @@ export function ProductList() {
     </section>
   );
 }
-
-    
-
-    

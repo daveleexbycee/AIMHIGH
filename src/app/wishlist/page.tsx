@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useCart, Product } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Star, Heart, GitCompareArrows, X } from "lucide-react";
+import { ShoppingCart, Star, Heart, X } from "lucide-react";
 
 export default function WishlistPage() {
   const { addToCart } = useCart();
@@ -25,7 +25,7 @@ export default function WishlistPage() {
     });
   };
 
-  const handleRemoveFromWishlist = (productId: number, productName: string) => {
+  const handleRemoveFromWishlist = (productId: string, productName: string) => {
     removeFromWishlist(productId);
     toast({
         title: "Removed from wishlist",
@@ -40,7 +40,12 @@ export default function WishlistPage() {
         <h1 className="text-3xl font-bold font-headline mb-8">My Wishlist</h1>
         {wishlist.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {wishlist.map((product) => (
+            {wishlist.map((product) => {
+                const totalReviews = product.reviews?.length || 0;
+                const averageRating = totalReviews > 0
+                    ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews
+                    : 0;
+                return (
               <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                 <div className="relative">
                   <Link href={`/product/${product.id}`} className="block">
@@ -68,15 +73,15 @@ export default function WishlistPage() {
                   </Link>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span>{product.rating}</span>
-                    <span>({product.reviews} reviews)</span>
+                    <span>{averageRating.toFixed(1)}</span>
+                    <span>({totalReviews} reviews)</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
                       {product.originalPrice && (
-                        <p className="text-xs text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</p>
+                        <p className="text-xs text-muted-foreground line-through">₦{product.originalPrice.toFixed(2)}</p>
                       )}
-                      <p className="font-bold text-primary text-lg">${product.price.toFixed(2)}</p>
+                      <p className="font-bold text-primary text-lg">₦{product.price.toFixed(2)}</p>
                     </div>
                     <Button variant="outline" size="icon" className="h-9 w-9 rounded-full" onClick={() => handleAddToCart(product)}>
                       <ShoppingCart className="h-4 w-4" />
@@ -84,7 +89,7 @@ export default function WishlistPage() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )})}
           </div>
         ) : (
             <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center py-24 border-dashed border-2 rounded-lg">

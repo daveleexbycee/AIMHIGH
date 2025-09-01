@@ -7,7 +7,7 @@ import type { Product } from "./use-cart";
 interface WishlistContextType {
   wishlist: Product[];
   addToWishlist: (product: Product) => void;
-  removeFromWishlist: (productId: number) => void;
+  removeFromWishlist: (productId: string) => void;
   clearWishlist: () => void;
 }
 
@@ -45,7 +45,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromWishlist = (productId: number) => {
+  const removeFromWishlist = (productId: string) => {
     setWishlist((prevWishlist) => prevWishlist.filter((item) => item.id !== productId));
   };
 

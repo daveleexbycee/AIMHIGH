@@ -13,7 +13,7 @@ import { useCart, Product } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart, Star, Heart, GitCompareArrows, SlidersHorizontal, X } from "lucide-react";
-import { products } from "@/lib/products";
+import { useProducts } from "@/hooks/use-products";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -30,9 +30,10 @@ function Shop() {
   const { addToCart } = useCart();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { toast } = useToast();
+  const { products, loading } = useProducts();
 
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 500]);
+  const [priceRange, setPriceRange] = useState([0, 500000]);
   const [selectedRating, setSelectedRating] = useState(0);
   const [sortBy, setSortBy] = useState("rating-desc");
 
@@ -67,7 +68,10 @@ function Shop() {
     let filtered = products.filter(product => {
       const matchesSearch = searchQuery ? product.name.toLowerCase().includes(searchQuery) : true;
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-      const matchesRating = selectedRating > 0 ? Math.round(product.rating) >= selectedRating : true;
+      const averageRating = product.reviews?.length > 0
+        ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length
+        : 0;
+      const matchesRating = selectedRating > 0 ? Math.round(averageRating) >= selectedRating : true;
       return matchesSearch && matchesPrice && matchesRating;
     });
 
@@ -79,7 +83,11 @@ function Shop() {
             filtered.sort((a, b) => b.price - a.price);
             break;
         case 'rating-desc':
-            filtered.sort((a, b) => b.rating - a.rating);
+             filtered.sort((a, b) => {
+                const ratingA = a.reviews?.length > 0 ? a.reviews.reduce((acc, review) => acc + review.rating, 0) / a.reviews.length : 0;
+                const ratingB = b.reviews?.length > 0 ? b.reviews.reduce((acc, review) => acc + review.rating, 0) / b.reviews.length : 0;
+                return ratingB - ratingA;
+            });
             break;
         case 'name-asc':
             filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -87,7 +95,7 @@ function Shop() {
     }
 
     return filtered;
-  }, [searchParams, priceRange, selectedRating, sortBy]);
+  }, [searchParams, products, priceRange, selectedRating, sortBy]);
 
   const FilterSidebar = () => (
      <aside className={`${isFilterSidebarOpen ? 'block' : 'hidden'} lg:block lg:w-64 lg:flex-shrink-0 lg:mr-8`}>
@@ -103,14 +111,14 @@ function Shop() {
                     <div>
                         <Label>Price Range</Label>
                         <Slider
-                            defaultValue={[0, 500]}
-                            max={500}
-                            step={10}
+                            defaultValue={[0, 500000]}
+                            max={500000}
+                            step={1000}
                             onValueChange={(value) => setPriceRange(value)}
                         />
                          <div className="flex justify-between text-sm text-muted-foreground mt-2">
-                            <span>${priceRange[0]}</span>
-                            <span>${priceRange[1]}</span>
+                            <span>₦{priceRange[0]}</span>
+                            <span>₦{priceRange[1]}</span>
                         </div>
                     </div>
                     <div>
@@ -130,7 +138,7 @@ function Shop() {
                         </RadioGroup>
                     </div>
                      <div>
-                        <Button variant="outline" className="w-full" onClick={() => { setPriceRange([0, 500]); setSelectedRating(0); }}>Clear Filters</Button>
+                        <Button variant="outline" className="w-full" onClick={() => { setPriceRange([0, 500000]); setSelectedRating(0); }}>Clear Filters</Button>
                     </div>
                 </div>
             </CardContent>
@@ -165,11 +173,16 @@ function Shop() {
         <div className="flex">
             <FilterSidebar />
             <div className="flex-1">
-                {filteredAndSortedProducts.length > 0 ? (
+                {loading ? (
+                    <div>Loading...</div>
+                ) : filteredAndSortedProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredAndSortedProducts.map((product) => {
                     const isWishlisted = wishlist.some(item => item.id === product.id);
                     const totalReviews = product.reviews?.length || 0;
+                    const averageRating = totalReviews > 0
+                        ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews
+                        : 0;
                     return (
                     <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                         <div className="relative">
@@ -201,15 +214,15 @@ function Shop() {
                             </Link>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
                             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            <span>{product.rating.toFixed(1)}</span>
+                            <span>{averageRating.toFixed(1)}</span>
                             <span>({totalReviews} reviews)</span>
                             </div>
                             <div className="flex justify-between items-center">
                             <div>
                                 {product.originalPrice && (
-                                <p className="text-xs text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</p>
+                                <p className="text-xs text-muted-foreground line-through">₦{product.originalPrice.toFixed(2)}</p>
                                 )}
-                                <p className="font-bold text-primary text-lg">${product.price.toFixed(2)}</p>
+                                <p className="font-bold text-primary text-lg">₦{product.price.toFixed(2)}</p>
                             </div>
                             <Button variant="outline" size="icon" className="h-9 w-9 rounded-full" onClick={() => handleAddToCart(product)}>
                                 <ShoppingCart className="h-4 w-4" />
@@ -240,6 +253,3 @@ export default function ShopPage() {
         </Suspense>
     )
 }
-    
-
-    

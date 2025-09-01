@@ -39,7 +39,7 @@ import { Badge } from "@/components/ui/badge"
               </svg>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$45,231.89</div>
+              <div className="text-2xl font-bold">₦45,231.89</div>
               <p className="text-xs text-muted-foreground">
                 +20.1% from last month
               </p>
@@ -146,7 +146,7 @@ import { Badge } from "@/components/ui/badge"
                             </TableCell>
                             <TableCell>2023-08-15</TableCell>
                             <TableCell><Badge>Fulfilled</Badge></TableCell>
-                            <TableCell className="text-right">$250.00</TableCell>
+                            <TableCell className="text-right">₦250.00</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>
@@ -155,7 +155,7 @@ import { Badge } from "@/components/ui/badge"
                             </TableCell>
                             <TableCell>2023-08-14</TableCell>
                             <TableCell><Badge variant="secondary">Shipped</Badge></TableCell>
-                            <TableCell className="text-right">$150.00</TableCell>
+                            <TableCell className="text-right">₦150.00</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>
@@ -164,7 +164,7 @@ import { Badge } from "@/components/ui/badge"
                             </TableCell>
                             <TableCell>2023-08-13</TableCell>
                             <TableCell><Badge variant="outline">Pending</Badge></TableCell>
-                            <TableCell className="text-right">$350.00</TableCell>
+                            <TableCell className="text-right">₦350.00</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
