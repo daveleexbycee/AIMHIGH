@@ -26,34 +26,78 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuTrigger,
+    DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { products as initialProducts } from "@/lib/products"
 import type { Product } from "@/hooks/use-cart"
+import { useToast } from "@/hooks/use-toast"
 
 export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>(initialProducts);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const { toast } = useToast();
 
-    const handleAddProduct = (event: React.FormEvent<HTMLFormElement>) => {
+    const openAddDrawer = () => {
+        setEditingProduct(null);
+        setIsDrawerOpen(true);
+    };
+
+    const openEditDrawer = (product: Product) => {
+        setEditingProduct(product);
+        setIsDrawerOpen(true);
+    };
+
+    const handleDeleteProduct = (productId: number) => {
+        setProducts(prev => prev.filter(p => p.id !== productId));
+        toast({
+            title: "Product Deleted",
+            description: "The product has been successfully removed.",
+        });
+    };
+
+    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const newProduct: Product = {
-            id: products.length + 1,
+        const productData = {
             name: formData.get("name") as string,
             price: parseFloat(formData.get("price") as string),
             originalPrice: formData.get("originalPrice") ? parseFloat(formData.get("originalPrice") as string) : undefined,
             image: formData.get("image") as string || "https://placehold.co/400x400.png",
             hint: (formData.get("name") as string).toLowerCase(),
             description: formData.get("description") as string,
-            rating: 0,
-            reviews: [],
         };
-        setProducts(prev => [...prev, newProduct]);
+
+        if (editingProduct) {
+            // Update existing product
+            const updatedProduct: Product = { ...editingProduct, ...productData };
+            setProducts(prev => prev.map(p => p.id === editingProduct.id ? updatedProduct : p));
+             toast({
+                title: "Product Updated",
+                description: `${updatedProduct.name} has been updated.`,
+            });
+        } else {
+            // Add new product
+            const newProduct: Product = {
+                id: Math.max(...products.map(p => p.id)) + 1,
+                ...productData,
+                rating: 0,
+                reviews: [],
+            };
+            setProducts(prev => [...prev, newProduct]);
+             toast({
+                title: "Product Added",
+                description: `${newProduct.name} has been added to your store.`,
+            });
+        }
+
         setIsDrawerOpen(false);
+        setEditingProduct(null);
     };
 
     return (
@@ -63,57 +107,16 @@ export default function AdminProductsPage() {
                     <CardTitle>Products</CardTitle>
                     <CardDescription>Manage your products here.</CardDescription>
                 </div>
-                <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                    <DrawerTrigger asChild>
-                        <Button>
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Add Product
-                        </Button>
-                    </DrawerTrigger>
-                    <DrawerContent>
-                        <DrawerHeader className="text-left">
-                            <DrawerTitle>Add a New Product</DrawerTitle>
-                            <DrawerDescription>
-                                Fill in the details below to add a new product to your store.
-                            </DrawerDescription>
-                        </DrawerHeader>
-                        <form onSubmit={handleAddProduct} className="px-4 space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="name">Product Name</Label>
-                                <Input id="name" name="name" required />
-                            </div>
-                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="price">Price</Label>
-                                    <Input id="price" name="price" type="number" step="0.01" required />
-                                </div>
-                                 <div className="space-y-2">
-                                    <Label htmlFor="originalPrice">Original Price (Optional)</Label>
-                                    <Input id="originalPrice" name="originalPrice" type="number" step="0.01" />
-                                </div>
-                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="description">Description</Label>
-                                <Textarea id="description" name="description" />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="image">Image URL</Label>
-                                <Input id="image" name="image" placeholder="https://..." />
-                            </div>
-                            <DrawerFooter className="flex-row gap-4 px-0">
-                                <Button type="submit">Add Product</Button>
-                                <DrawerClose asChild>
-                                    <Button variant="outline">Cancel</Button>
-                                </DrawerClose>
-                            </DrawerFooter>
-                        </form>
-                    </DrawerContent>
-                </Drawer>
+                <Button onClick={openAddDrawer}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Product
+                </Button>
             </CardHeader>
             <CardContent>
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead>Image</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Price</TableHead>
@@ -123,9 +126,15 @@ export default function AdminProductsPage() {
                     <TableBody>
                         {products.map(product => (
                             <TableRow key={product.id}>
+                                <TableCell>
+                                    <img src={product.image} alt={product.name} className="h-10 w-10 object-cover rounded-md" />
+                                </TableCell>
                                 <TableCell className="font-medium">{product.name}</TableCell>
                                 <TableCell><Badge>In Stock</Badge></TableCell>
-                                <TableCell>${product.price.toFixed(2)}</TableCell>
+                                <TableCell>
+                                    {product.originalPrice && <span className="text-muted-foreground line-through mr-2">${product.originalPrice.toFixed(2)}</span>}
+                                    ${product.price.toFixed(2)}
+                                </TableCell>
                                 <TableCell>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -136,8 +145,26 @@ export default function AdminProductsPage() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => openEditDrawer(product)}>Edit</DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">Delete</DropdownMenuItem>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This action cannot be undone. This will permanently delete the product
+                                                            "{product.name}".
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>Delete</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
@@ -146,6 +173,46 @@ export default function AdminProductsPage() {
                     </TableBody>
                 </Table>
             </CardContent>
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                <DrawerContent>
+                    <DrawerHeader className="text-left">
+                        <DrawerTitle>{editingProduct ? "Edit Product" : "Add a New Product"}</DrawerTitle>
+                        <DrawerDescription>
+                            {editingProduct ? "Update the details for this product." : "Fill in the details below to add a new product."}
+                        </DrawerDescription>
+                    </DrawerHeader>
+                    <form onSubmit={handleFormSubmit} className="px-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Product Name</Label>
+                            <Input id="name" name="name" defaultValue={editingProduct?.name} required />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="price">Price</Label>
+                                <Input id="price" name="price" type="number" step="0.01" defaultValue={editingProduct?.price} required />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="originalPrice">Original Price (for sales)</Label>
+                                <Input id="originalPrice" name="originalPrice" type="number" step="0.01" defaultValue={editingProduct?.originalPrice} />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="description">Description</Label>
+                            <Textarea id="description" name="description" defaultValue={editingProduct?.description} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="image">Image URL</Label>
+                            <Input id="image" name="image" placeholder="https://..." defaultValue={editingProduct?.image} />
+                        </div>
+                        <DrawerFooter className="flex-row gap-4 px-0">
+                            <Button type="submit">{editingProduct ? "Save Changes" : "Add Product"}</Button>
+                            <DrawerClose asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </DrawerClose>
+                        </DrawerFooter>
+                    </form>
+                </DrawerContent>
+            </Drawer>
         </Card>
     )
 }
