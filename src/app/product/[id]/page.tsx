@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "@/lib/firestore";
+import { db } from "@/lib/firebase";
 import { Product } from "@/hooks/use-cart";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
@@ -160,7 +160,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div className="space-y-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-3">
                 <Truck className="w-5 h-5 text-primary" />
-                <span>Free shipping on orders over ₦50</span>
+                <span>Free shipping on orders over ₦700,000</span>
               </div>
               <div className="flex items-center gap-3">
                 <ShieldCheck className="w-5 h-5 text-primary" />
