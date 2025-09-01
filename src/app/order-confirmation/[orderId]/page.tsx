@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function OrderConfirmationPage({ params }: { params: { orderId: string } }) {
     const { toast } = useToast();
+    const orderId = params.orderId;
 
     useEffect(() => {
         toast({
@@ -37,7 +38,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
                 </p>
                 <div className="bg-secondary p-4 rounded-md">
                     <p className="text-sm text-muted-foreground">Your Order ID is:</p>
-                    <p className="text-lg font-bold font-mono tracking-widest">{params.orderId}</p>
+                    <p className="text-lg font-bold font-mono tracking-widest">{orderId}</p>
                 </div>
                 <div className="flex gap-4 justify-center">
                     <Button asChild>
@@ -46,7 +47,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
                         </Link>
                     </Button>
                     <Button variant="outline" asChild>
-                         <Link href={`/track-order?id=${params.orderId}`}>
+                         <Link href={`/track-order?id=${orderId}`}>
                             Track Your Order
                         </Link>
                     </Button>
