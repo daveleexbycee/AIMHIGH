@@ -3,13 +3,13 @@
 
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart, Product } from "@/hooks/use-cart.tsx";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Star, Heart, GitCompareArrows } from "lucide-react";
 import { products } from "@/lib/products";
 
 export default function ShopPage() {
@@ -29,36 +29,53 @@ export default function ShopPage() {
       <Header />
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold font-headline mb-8">Shop All Products</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="group overflow-hidden">
-               <Link href={`/product/${product.id}`}>
-                <CardHeader className="p-0 relative">
+             <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
+              <div className="relative">
+                <Link href={`/product/${product.id}`} className="block">
                   <Image 
                     src={product.image} 
                     alt={product.name} 
                     width={400} 
                     height={400} 
-                    className="object-cover w-full h-full aspect-square group-hover:scale-105 transition-transform duration-300" 
+                    className="object-cover w-full h-full aspect-[1/1] group-hover:scale-105 transition-transform duration-300" 
                     data-ai-hint={product.hint}
                   />
-                  {product.tag && (
-                    <Badge className="absolute top-3 right-3" variant={product.tag === 'Hot' ? 'destructive' : 'default'}>{product.tag}</Badge>
-                  )}
-                </CardHeader>
-              </Link>
-              <CardContent className="pt-4">
-                 <Link href={`/product/${product.id}`}>
-                  <CardTitle className="text-lg font-medium hover:text-primary transition-colors">{product.name}</CardTitle>
                 </Link>
+                {product.tag && (
+                    <Badge className="absolute top-3 left-3" variant={product.tag === 'Hot' ? 'destructive' : 'secondary'}>{product.tag}</Badge>
+                )}
+                 <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full">
+                        <Heart className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background rounded-full">
+                        <GitCompareArrows className="h-4 w-4" />
+                    </Button>
+                </div>
+              </div>
+              <CardContent className="p-4 flex-grow flex flex-col">
+                <Link href={`/product/${product.id}`} className="flex-grow">
+                  <h3 className="font-medium text-sm hover:text-primary transition-colors mb-2">{product.name}</h3>
+                </Link>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span>{product.rating}</span>
+                  <span>({product.reviews} reviews)</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    {product.originalPrice && (
+                      <p className="text-xs text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</p>
+                    )}
+                    <p className="font-bold text-primary text-lg">${product.price.toFixed(2)}</p>
+                  </div>
+                  <Button variant="outline" size="icon" className="h-9 w-9 rounded-full" onClick={() => handleAddToCart(product)}>
+                    <ShoppingCart className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
-              <CardFooter className="flex justify-between items-center">
-                <p className="font-bold text-primary text-lg">${product.price}</p>
-                <Button variant="outline" size="sm" onClick={() => handleAddToCart(product)}>
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  Add to Cart
-                </Button>
-              </CardFooter>
             </Card>
           ))}
         </div>
@@ -66,3 +83,4 @@ export default function ShopPage() {
     </>
   );
 }
+

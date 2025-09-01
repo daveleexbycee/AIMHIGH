@@ -34,6 +34,27 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     });
   };
 
+  const renderStars = () => {
+    const stars = [];
+    const fullStars = Math.floor(product.rating);
+    const halfStar = product.rating % 1 !== 0;
+
+    for (let i = 0; i < fullStars; i++) {
+        stars.push(<Star key={`full-${i}`} className="w-5 h-5 fill-yellow-400 text-yellow-400" />);
+    }
+
+    // Note: half star implementation is simplified. For a real app, you might need a half-star icon.
+    if (halfStar) {
+        stars.push(<Star key="half" className="w-5 h-5 fill-yellow-400 text-yellow-400" />);
+    }
+
+    for (let i = 0; i < 5 - Math.ceil(product.rating); i++) {
+        stars.push(<Star key={`empty-${i}`} className="w-5 h-5 text-muted-foreground fill-muted-foreground/50" />);
+    }
+    return stars;
+};
+
+
   return (
     <>
       <Header />
@@ -49,22 +70,26 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 data-ai-hint={product.hint}
               />
                {product.tag && (
-                <Badge className="absolute top-4 left-4" variant={product.tag === 'Hot' ? 'destructive' : 'default'}>{product.tag}</Badge>
+                <Badge className="absolute top-4 left-4" variant={product.tag === 'Hot' ? 'destructive' : 'secondary'}>{product.tag}</Badge>
               )}
             </div>
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4">{product.name}</h1>
-            <p className="text-2xl font-semibold text-primary mb-6">${product.price}</p>
-            <div className="flex items-center gap-2 mb-6">
-              <div className="flex text-yellow-400">
-                <Star className="w-5 h-5 fill-current" />
-                <Star className="w-5 h-5 fill-current" />
-                <Star className="w-5 h-5 fill-current" />
-                <Star className="w-5 h-5 fill-current" />
-                <Star className="w-5 h-5 text-muted-foreground fill-muted-foreground" />
-              </div>
-              <span className="text-muted-foreground text-sm">(123 reviews)</span>
+             <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-2">
+                    <div className="flex">
+                        {renderStars()}
+                    </div>
+                    <span className="text-muted-foreground text-sm">{product.rating}</span>
+                </div>
+                <span className="text-muted-foreground text-sm">({product.reviews} reviews)</span>
+            </div>
+            <div className="flex items-center gap-4 mb-6">
+                {product.originalPrice && (
+                    <p className="text-xl text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</p>
+                )}
+                <p className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</p>
             </div>
             <p className="text-muted-foreground mb-6">{product.description}</p>
             <div className="flex items-center gap-4 mb-8">
