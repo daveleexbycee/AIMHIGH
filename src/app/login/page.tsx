@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -6,11 +7,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { auth } from "@/lib/firebase"
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "firebase/auth"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Logo } from "@/components/ui/logo"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -44,6 +46,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [resetEmail, setResetEmail] = useState('');
     const { toast } = useToast();
     const router = useRouter();
 
@@ -76,6 +79,23 @@ export default function LoginPage() {
             });
         }
     };
+    
+    const handlePasswordReset = async () => {
+        if (!resetEmail) {
+            toast({ variant: 'destructive', title: 'Please enter your email address.' });
+            return;
+        }
+        try {
+            await sendPasswordResetEmail(auth, resetEmail);
+            toast({ title: 'Password Reset Email Sent', description: 'Please check your inbox to reset your password.' });
+        } catch (error: any) {
+             toast({
+                variant: 'destructive',
+                title: 'Failed to Send Reset Email',
+                description: error.message,
+            });
+        }
+    }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950 p-4">
@@ -108,12 +128,36 @@ export default function LoginPage() {
                 <div className="grid gap-2">
                     <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    <Link
-                        href="#"
-                        className="ml-auto inline-block text-sm underline"
-                    >
-                        Forgot your password?
-                    </Link>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                         <button type="button" className="ml-auto inline-block text-sm underline">
+                            Forgot your password?
+                         </button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                          <AlertDialogHeader>
+                              <AlertDialogTitle>Reset Your Password</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                  Enter your email address and we'll send you a link to reset your password.
+                              </AlertDialogDescription>
+                          </AlertDialogHeader>
+                           <div className="grid gap-2">
+                                <Label htmlFor="reset-email" className="sr-only">Email</Label>
+                                <Input 
+                                    id="reset-email" 
+                                    type="email" 
+                                    placeholder="m@example.com" 
+                                    value={resetEmail}
+                                    onChange={(e) => setResetEmail(e.target.value)}
+                                    required 
+                                />
+                            </div>
+                          <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={handlePasswordReset}>Send Reset Link</AlertDialogAction>
+                          </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     </div>
                     <Input 
                         id="password" 

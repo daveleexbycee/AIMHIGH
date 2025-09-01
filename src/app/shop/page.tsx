@@ -36,6 +36,16 @@ function Shop() {
   const [priceRange, setPriceRange] = useState([0, 500000]);
   const [selectedRating, setSelectedRating] = useState(0);
   const [sortBy, setSortBy] = useState("rating-desc");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const categories = useMemo(() => {
+    if (loading) return [];
+    const productCategories = products
+      .map(p => p.category)
+      .filter((c): c is string => !!c);
+    return ["All", ...Array.from(new Set(productCategories))];
+  }, [products, loading]);
+
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
@@ -68,11 +78,10 @@ function Shop() {
     let filtered = products.filter(product => {
       const matchesSearch = searchQuery ? product.name.toLowerCase().includes(searchQuery) : true;
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-      const averageRating = product.reviews?.length > 0
-        ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length
-        : 0;
+      const averageRating = product.rating || 0;
       const matchesRating = selectedRating > 0 ? Math.round(averageRating) >= selectedRating : true;
-      return matchesSearch && matchesPrice && matchesRating;
+      const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+      return matchesSearch && matchesPrice && matchesRating && matchesCategory;
     });
 
     switch (sortBy) {
@@ -83,11 +92,7 @@ function Shop() {
             filtered.sort((a, b) => b.price - a.price);
             break;
         case 'rating-desc':
-             filtered.sort((a, b) => {
-                const ratingA = a.reviews?.length > 0 ? a.reviews.reduce((acc, review) => acc + review.rating, 0) / a.reviews.length : 0;
-                const ratingB = b.reviews?.length > 0 ? b.reviews.reduce((acc, review) => acc + review.rating, 0) / b.reviews.length : 0;
-                return ratingB - ratingA;
-            });
+             filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
             break;
         case 'name-asc':
             filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -95,7 +100,13 @@ function Shop() {
     }
 
     return filtered;
-  }, [searchParams, products, priceRange, selectedRating, sortBy]);
+  }, [searchParams, products, priceRange, selectedRating, sortBy, selectedCategory]);
+  
+  const clearFilters = () => {
+      setPriceRange([0, 500000]);
+      setSelectedRating(0);
+      setSelectedCategory("All");
+  };
 
   const FilterSidebar = () => (
      <aside className={`${isFilterSidebarOpen ? 'block' : 'hidden'} lg:block lg:w-64 lg:flex-shrink-0 lg:mr-8`}>
@@ -109,9 +120,20 @@ function Shop() {
                 </div>
                 <div className="space-y-6">
                     <div>
+                        <Label>Category</Label>
+                         <RadioGroup onValueChange={setSelectedCategory} value={selectedCategory} className="mt-2 space-y-2">
+                           {categories.map(category => (
+                             <div key={category} className="flex items-center space-x-2">
+                                <RadioGroupItem value={category} id={`c-${category}`} />
+                                <Label htmlFor={`c-${category}`} className="cursor-pointer font-normal">{category}</Label>
+                            </div>
+                           ))}
+                        </RadioGroup>
+                    </div>
+                    <div>
                         <Label>Price Range</Label>
                         <Slider
-                            defaultValue={[0, 500000]}
+                            value={priceRange}
                             max={500000}
                             step={1000}
                             onValueChange={(value) => setPriceRange(value)}
@@ -127,7 +149,7 @@ function Shop() {
                            {[4, 3, 2, 1].map(rating => (
                              <div key={rating} className="flex items-center space-x-2">
                                 <RadioGroupItem value={String(rating)} id={`r${rating}`} />
-                                <Label htmlFor={`r${rating}`} className="flex items-center cursor-pointer">
+                                <Label htmlFor={`r${rating}`} className="flex items-center cursor-pointer font-normal">
                                     {[...Array(5)].map((_, i) => (
                                         <Star key={i} className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
                                     ))}
@@ -138,7 +160,7 @@ function Shop() {
                         </RadioGroup>
                     </div>
                      <div>
-                        <Button variant="outline" className="w-full" onClick={() => { setPriceRange([0, 500000]); setSelectedRating(0); }}>Clear Filters</Button>
+                        <Button variant="outline" className="w-full" onClick={clearFilters}>Clear Filters</Button>
                     </div>
                 </div>
             </CardContent>
@@ -179,10 +201,8 @@ function Shop() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredAndSortedProducts.map((product) => {
                     const isWishlisted = wishlist.some(item => item.id === product.id);
+                    const averageRating = product.rating || 0;
                     const totalReviews = product.reviews?.length || 0;
-                    const averageRating = totalReviews > 0
-                        ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length
-                        : 0;
                     return (
                     <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                         <div className="relative">
