@@ -26,7 +26,7 @@ export interface Order {
       state: string;
       lga: string;
       zip: string;
-  }
+  };
   shippingFee: number;
 }
 

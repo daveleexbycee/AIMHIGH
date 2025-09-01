@@ -2,6 +2,7 @@
 import { db } from './firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc, runTransaction } from 'firebase/firestore';
 import { Product, Review } from '@/hooks/use-cart';
+import { Order } from '@/hooks/use-orders';
 
 const productsCollection = collection(db, 'products');
 const ordersCollection = collection(db, 'orders');
@@ -26,6 +27,11 @@ export const addOrder = async (order: any) => {
     const orderDoc = doc(ordersCollection, order.id);
     return await setDoc(orderDoc, order);
 };
+
+export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
+    const orderDoc = doc(db, 'orders', orderId);
+    return await updateDoc(orderDoc, { status: status });
+}
 
 export const addUser = async (user: any) => {
     const userDoc = doc(usersCollection, user.uid);
