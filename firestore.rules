@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if a user is an admin
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'agbidave40@gmail.com';
+    }
+
+    // Helper function to check if the user is the owner of the document
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Products can be read by anyone, but only created/updated/deleted by an admin.
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+
+      // Reviews can be read by anyone.
+      // A logged-in user can create a review.
+      // A user can only update or delete their own review.
+      match /reviews/{reviewId} {
+        allow read: if true;
+        allow create: if request.auth != null;
+        allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      }
+    }
+
+    // Users can only read and write their own data (e.g., for carts, wishlists).
+    match /users/{userId}/{document=**} {
+        allow read, write: if isOwner(userId);
+    }
+    
+    // Orders can be read by the user who created them or by an admin.
+    // Users can only create their own orders.
+    // Admins can update order statuses.
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create: if isOwner(request.resource.data.userId);
+      allow update: if isAdmin();
+      allow delete: if false; // Orders should generally not be deleted.
+    }
+  }
+}
