@@ -14,7 +14,7 @@ export function Logo({ className, ...props }: React.SVGProps<SVGSVGElement>) {
           x="50"
           y="58"
           fontFamily="Lexend, sans-serif"
-          fontSize="24"
+          fontSize="22"
           fontWeight="bold"
           textAnchor="middle"
           fill="white"
