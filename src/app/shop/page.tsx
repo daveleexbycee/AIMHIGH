@@ -109,24 +109,26 @@ function Shop() {
       setSelectedCategory("All");
   };
 
-  const FilterSidebarContent = () => (
-    <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
+  const FilterSidebarContent = ({isSheet = false}: {isSheet?: boolean}) => (
+    <>
+        <div className="flex justify-between items-center mb-4 p-6 pb-0">
              <h3 className="font-semibold">Filters</h3>
-             <SheetClose asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden">
-                  <X className="h-4 w-4" />
-              </Button>
-             </SheetClose>
+             {isSheet && (
+                <SheetClose asChild>
+                    <Button variant="ghost" size="icon" className="lg:hidden">
+                        <X className="h-4 w-4" />
+                    </Button>
+                </SheetClose>
+             )}
         </div>
-        <div className="space-y-6">
+        <div className="space-y-6 p-6">
             <div>
                 <Label>Category</Label>
                  <RadioGroup onValueChange={setSelectedCategory} value={selectedCategory} className="mt-2 space-y-2">
                    {categories.map(category => (
                      <div key={category} className="flex items-center space-x-2">
-                        <RadioGroupItem value={category} id={`c-${category}`} />
-                        <Label htmlFor={`c-${category}`} className="cursor-pointer font-normal">{category}</Label>
+                        <RadioGroupItem value={category} id={`c-${category}${isSheet ? '-sheet' : ''}`} />
+                        <Label htmlFor={`c-${category}${isSheet ? '-sheet' : ''}`} className="cursor-pointer font-normal">{category}</Label>
                     </div>
                    ))}
                 </RadioGroup>
@@ -149,8 +151,8 @@ function Shop() {
                 <RadioGroup onValueChange={(value) => setSelectedRating(parseInt(value))} value={String(selectedRating)} className="mt-2 space-y-2">
                    {[4, 3, 2, 1].map(rating => (
                      <div key={rating} className="flex items-center space-x-2">
-                        <RadioGroupItem value={String(rating)} id={`r${rating}`} />
-                        <Label htmlFor={`r${rating}`} className="flex items-center cursor-pointer font-normal">
+                        <RadioGroupItem value={String(rating)} id={`r${rating}${isSheet ? '-sheet' : ''}`} />
+                        <Label htmlFor={`r${rating}${isSheet ? '-sheet' : ''}`} className="flex items-center cursor-pointer font-normal">
                             {[...Array(5)].map((_, i) => (
                                 <Star key={i} className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
                             ))}
@@ -164,7 +166,7 @@ function Shop() {
                 <Button variant="outline" className="w-full" onClick={clearFilters}>Clear Filters</Button>
             </div>
         </div>
-    </div>
+    </>
   );
 
   return (
@@ -182,7 +184,7 @@ function Shop() {
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0">
-                      <FilterSidebarContent />
+                      <FilterSidebarContent isSheet={true} />
                     </SheetContent>
                 </Sheet>
                  <Select value={sortBy} onValueChange={setSortBy}>
@@ -278,6 +280,8 @@ export default function ShopPage() {
         </Suspense>
     )
 }
+
+    
 
     
 
