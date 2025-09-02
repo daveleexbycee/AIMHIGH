@@ -42,9 +42,7 @@ export default function WishlistPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {wishlist.map((product) => {
                 const totalReviews = product.reviews?.length || 0;
-                const averageRating = totalReviews > 0
-                    ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews
-                    : 0;
+                const averageRating = product.rating || 0;
                 return (
               <Card key={product.id} className="group overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                 <div className="relative">

@@ -109,8 +109,8 @@ function Shop() {
   };
 
   const FilterSidebar = () => (
-     <aside className={`${isFilterSidebarOpen ? 'block' : 'hidden'} lg:block lg:w-64 lg:flex-shrink-0 lg:mr-8`}>
-        <Card>
+     <aside className={`${isFilterSidebarOpen ? 'block fixed inset-0 z-50 bg-background/80 backdrop-blur-sm' : 'hidden'} lg:static lg:block lg:w-64 lg:flex-shrink-0 lg:mr-8 lg:bg-transparent lg:backdrop-blur-none`}>
+        <Card className="h-full lg:h-auto">
             <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-4">
                      <h3 className="font-semibold">Filters</h3>

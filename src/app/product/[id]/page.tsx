@@ -21,6 +21,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { addReview } from "@/lib/firestore";
 import { Product } from "@/hooks/use-cart";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
@@ -56,8 +57,22 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       return (
            <>
             <Header />
-            <main className="container mx-auto px-4 py-8 text-center">
-                <h1 className="text-2xl font-bold">Loading...</h1>
+            <main className="container mx-auto px-4 py-8">
+                 <div className="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <Skeleton className="aspect-square rounded-lg" />
+                    </div>
+                    <div className="space-y-4">
+                        <Skeleton className="h-10 w-3/4" />
+                        <Skeleton className="h-6 w-1/2" />
+                        <Skeleton className="h-8 w-1/4" />
+                        <Skeleton className="h-20 w-full" />
+                        <div className="flex gap-4">
+                            <Skeleton className="h-12 w-32" />
+                            <Skeleton className="h-12 w-32" />
+                        </div>
+                    </div>
+                </div>
             </main>
            </>
       )
@@ -133,7 +148,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     <>
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           <div>
             <div className="relative aspect-square">
               <Image 
@@ -164,12 +179,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <p className="text-3xl font-bold text-primary">₦{product.price.toFixed(2)}</p>
             </div>
             <p className="text-muted-foreground mb-6">{product.description}</p>
-            <div className="flex items-center gap-4 mb-8">
-              <Button size="lg" onClick={handleAddToCart}>
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
+              <Button size="lg" className="w-full sm:w-auto" onClick={handleAddToCart}>
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
               </Button>
-              <Button size="lg" variant="outline" onClick={handleWishlistToggle}>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={handleWishlistToggle}>
                 <Heart className={`mr-2 h-5 w-5 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
                 {isWishlisted ? 'Wishlisted' : 'Wishlist'}
               </Button>
