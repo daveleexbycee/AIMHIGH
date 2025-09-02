@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 function Shop() {
   const searchParams = useSearchParams();
@@ -108,64 +109,62 @@ function Shop() {
       setSelectedCategory("All");
   };
 
-  const FilterSidebar = () => (
-     <aside className={`${isFilterSidebarOpen ? 'block fixed inset-0 z-50 bg-background/80 backdrop-blur-sm' : 'hidden'} lg:static lg:block lg:w-64 lg:flex-shrink-0 lg:mr-8 lg:bg-transparent lg:backdrop-blur-none`}>
-        <Card className="h-full lg:h-auto">
-            <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                     <h3 className="font-semibold">Filters</h3>
-                     <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsFilterSidebarOpen(false)}>
-                         <X className="h-4 w-4" />
-                     </Button>
+  const FilterSidebarContent = () => (
+    <div className="p-6">
+        <div className="flex justify-between items-center mb-4">
+             <h3 className="font-semibold">Filters</h3>
+             <SheetClose asChild>
+              <Button variant="ghost" size="icon" className="lg:hidden">
+                  <X className="h-4 w-4" />
+              </Button>
+             </SheetClose>
+        </div>
+        <div className="space-y-6">
+            <div>
+                <Label>Category</Label>
+                 <RadioGroup onValueChange={setSelectedCategory} value={selectedCategory} className="mt-2 space-y-2">
+                   {categories.map(category => (
+                     <div key={category} className="flex items-center space-x-2">
+                        <RadioGroupItem value={category} id={`c-${category}`} />
+                        <Label htmlFor={`c-${category}`} className="cursor-pointer font-normal">{category}</Label>
+                    </div>
+                   ))}
+                </RadioGroup>
+            </div>
+            <div>
+                <Label>Price Range</Label>
+                <Slider
+                    value={priceRange}
+                    max={500000}
+                    step={1000}
+                    onValueChange={(value) => setPriceRange(value)}
+                />
+                 <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                    <span>₦{priceRange[0]}</span>
+                    <span>₦{priceRange[1]}</span>
                 </div>
-                <div className="space-y-6">
-                    <div>
-                        <Label>Category</Label>
-                         <RadioGroup onValueChange={setSelectedCategory} value={selectedCategory} className="mt-2 space-y-2">
-                           {categories.map(category => (
-                             <div key={category} className="flex items-center space-x-2">
-                                <RadioGroupItem value={category} id={`c-${category}`} />
-                                <Label htmlFor={`c-${category}`} className="cursor-pointer font-normal">{category}</Label>
-                            </div>
-                           ))}
-                        </RadioGroup>
+            </div>
+            <div>
+                <Label>Rating</Label>
+                <RadioGroup onValueChange={(value) => setSelectedRating(parseInt(value))} value={String(selectedRating)} className="mt-2 space-y-2">
+                   {[4, 3, 2, 1].map(rating => (
+                     <div key={rating} className="flex items-center space-x-2">
+                        <RadioGroupItem value={String(rating)} id={`r${rating}`} />
+                        <Label htmlFor={`r${rating}`} className="flex items-center cursor-pointer font-normal">
+                            {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                            ))}
+                            <span className="ml-2 text-sm text-muted-foreground">& up</span>
+                        </Label>
                     </div>
-                    <div>
-                        <Label>Price Range</Label>
-                        <Slider
-                            value={priceRange}
-                            max={500000}
-                            step={1000}
-                            onValueChange={(value) => setPriceRange(value)}
-                        />
-                         <div className="flex justify-between text-sm text-muted-foreground mt-2">
-                            <span>₦{priceRange[0]}</span>
-                            <span>₦{priceRange[1]}</span>
-                        </div>
-                    </div>
-                    <div>
-                        <Label>Rating</Label>
-                        <RadioGroup onValueChange={(value) => setSelectedRating(parseInt(value))} value={String(selectedRating)} className="mt-2 space-y-2">
-                           {[4, 3, 2, 1].map(rating => (
-                             <div key={rating} className="flex items-center space-x-2">
-                                <RadioGroupItem value={String(rating)} id={`r${rating}`} />
-                                <Label htmlFor={`r${rating}`} className="flex items-center cursor-pointer font-normal">
-                                    {[...Array(5)].map((_, i) => (
-                                        <Star key={i} className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
-                                    ))}
-                                    <span className="ml-2 text-sm text-muted-foreground">& up</span>
-                                </Label>
-                            </div>
-                           ))}
-                        </RadioGroup>
-                    </div>
-                     <div>
-                        <Button variant="outline" className="w-full" onClick={clearFilters}>Clear Filters</Button>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-     </aside>
+                   ))}
+                </RadioGroup>
+            </div>
+             <div>
+                <Button variant="outline" className="w-full" onClick={clearFilters}>Clear Filters</Button>
+            </div>
+        </div>
+    </div>
   );
 
   return (
@@ -175,10 +174,17 @@ function Shop() {
         <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-bold font-headline">Shop Products</h1>
             <div className="flex items-center gap-4">
-                <Button variant="outline" className="lg:hidden" onClick={() => setIsFilterSidebarOpen(true)}>
-                    <SlidersHorizontal className="mr-2 h-4 w-4" />
-                    Filter
-                </Button>
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" className="lg:hidden">
+                            <SlidersHorizontal className="mr-2 h-4 w-4" />
+                            Filter
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0">
+                      <FilterSidebarContent />
+                    </SheetContent>
+                </Sheet>
                  <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Sort by" />
@@ -193,12 +199,14 @@ function Shop() {
             </div>
         </div>
         <div className="flex">
-            <FilterSidebar />
+            <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:mr-8">
+                <Card><FilterSidebarContent /></Card>
+            </aside>
             <div className="flex-1">
                 {loading ? (
                     <div>Loading...</div>
                 ) : filteredAndSortedProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredAndSortedProducts.map((product) => {
                     const isWishlisted = wishlist.some(item => item.id === product.id);
                     const averageRating = product.rating || 0;
@@ -270,3 +278,5 @@ export default function ShopPage() {
         </Suspense>
     )
 }
+
+    
