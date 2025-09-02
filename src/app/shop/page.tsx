@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 
 function Shop() {
   const searchParams = useSearchParams();
@@ -278,5 +278,7 @@ export default function ShopPage() {
         </Suspense>
     )
 }
+
+    
 
     
