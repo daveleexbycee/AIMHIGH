@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { useOrders } from "@/hooks/use-orders";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, LoaderCircle } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -51,7 +51,12 @@ export default function AdminOrdersPage() {
     }
 
     if (loading) {
-        return <div>Loading orders...</div>
+        return (
+            <div className="flex flex-col items-center justify-center h-full">
+                <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-muted-foreground mt-2">Loading orders...</p>
+            </div>
+        )
     }
 
     return (

@@ -19,7 +19,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { MoreHorizontal, PlusCircle } from "lucide-react"
+import { MoreHorizontal, PlusCircle, LoaderCircle } from "lucide-react"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -38,6 +38,7 @@ import type { Product } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { addProduct, updateProduct, deleteProduct } from "@/lib/firestore"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function AdminProductsPage() {
     const { products, loading } = useProducts();
@@ -125,7 +126,12 @@ export default function AdminProductsPage() {
     }
 
     if (loading) {
-        return <div>Loading products...</div>
+        return (
+            <div className="flex flex-col items-center justify-center h-full">
+                <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-muted-foreground mt-2">Loading products...</p>
+            </div>
+        )
     }
 
     return (

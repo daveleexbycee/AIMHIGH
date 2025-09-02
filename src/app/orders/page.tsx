@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useAuth } from "@/hooks/use-auth";
 import { useUserOrders } from "@/hooks/use-user-orders";
 import { Badge } from "@/components/ui/badge";
-import { History, ShoppingBag } from "lucide-react";
+import { History, ShoppingBag, LoaderCircle } from "lucide-react";
 
 export default function OrdersPage() {
     const { user, loading: authLoading } = useAuth();
@@ -26,7 +26,10 @@ export default function OrdersPage() {
     if (authLoading || ordersLoading) {
         return (
              <div className="flex h-screen items-center justify-center">
-                <p>Loading your orders...</p>
+                <div className="flex flex-col items-center gap-2">
+                    <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-muted-foreground">Loading your orders...</p>
+                </div>
             </div>
         )
     }

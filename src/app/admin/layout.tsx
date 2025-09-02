@@ -13,7 +13,7 @@ import {
   SidebarTrigger,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard, Package, ShoppingCart, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
@@ -72,8 +72,9 @@ export default function AdminLayout({
   if (loading || !user || user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
     return (
         <div className="flex h-screen items-center justify-center">
-            <div className="text-center">
-                <p>Loading...</p>
+            <div className="flex flex-col items-center gap-2">
+                <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-muted-foreground">Loading...</p>
             </div>
         </div>
     );

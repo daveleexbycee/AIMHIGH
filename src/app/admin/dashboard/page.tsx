@@ -19,7 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { useOrders } from "@/hooks/use-orders";
 import { useUsers } from "@/hooks/use-users";
-import { DollarSign, Users, CreditCard, MoreHorizontal } from "lucide-react";
+import { DollarSign, Users, CreditCard, MoreHorizontal, LoaderCircle } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -54,7 +54,12 @@ export default function AdminDashboard() {
   }
 
   if (ordersLoading || usersLoading) {
-    return <div>Loading dashboard data...</div>
+    return (
+        <div className="flex flex-col items-center justify-center h-full">
+            <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground mt-2">Loading dashboard data...</p>
+        </div>
+    )
   }
   
   const fulfilledOrders = orders.filter(order => order.status === 'Fulfilled');

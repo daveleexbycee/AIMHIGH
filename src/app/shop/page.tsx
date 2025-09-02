@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function Shop() {
   const searchParams = useSearchParams();
@@ -33,7 +34,6 @@ function Shop() {
   const { toast } = useToast();
   const { products, loading } = useProducts();
 
-  const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 500000]);
   const [selectedRating, setSelectedRating] = useState(0);
   const [sortBy, setSortBy] = useState("rating-desc");
@@ -110,18 +110,18 @@ function Shop() {
   };
 
   const FilterSidebarContent = ({isSheet = false}: {isSheet?: boolean}) => (
-    <>
-        <div className="flex justify-between items-center mb-4 p-6 pb-0">
+    <div className="h-full flex flex-col">
+        <div className="flex justify-between items-center p-6 pb-0">
              <h3 className="font-semibold">Filters</h3>
              {isSheet && (
                 <SheetClose asChild>
-                    <Button variant="ghost" size="icon" className="lg:hidden">
+                    <Button variant="ghost" size="icon">
                         <X className="h-4 w-4" />
                     </Button>
                 </SheetClose>
              )}
         </div>
-        <div className="space-y-6 p-6">
+        <div className="space-y-6 p-6 flex-1 overflow-y-auto">
             <div>
                 <Label>Category</Label>
                  <RadioGroup onValueChange={setSelectedCategory} value={selectedCategory} className="mt-2 space-y-2">
@@ -140,6 +140,7 @@ function Shop() {
                     max={500000}
                     step={1000}
                     onValueChange={(value) => setPriceRange(value)}
+                    className="mt-2"
                 />
                  <div className="flex justify-between text-sm text-muted-foreground mt-2">
                     <span>₦{priceRange[0]}</span>
@@ -162,11 +163,11 @@ function Shop() {
                    ))}
                 </RadioGroup>
             </div>
-             <div>
-                <Button variant="outline" className="w-full" onClick={clearFilters}>Clear Filters</Button>
-            </div>
         </div>
-    </>
+        <div className="p-6 border-t">
+            <Button variant="outline" className="w-full" onClick={clearFilters}>Clear Filters</Button>
+        </div>
+    </div>
   );
 
   return (
@@ -206,7 +207,21 @@ function Shop() {
             </aside>
             <div className="flex-1">
                 {loading ? (
-                    <div>Loading...</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {Array.from({ length: 6 }).map((_, index) => (
+                            <Card key={index} className="overflow-hidden">
+                                <Skeleton className="h-48 w-full" />
+                                <CardContent className="p-4 space-y-2">
+                                    <Skeleton className="h-4 w-4/5" />
+                                    <Skeleton className="h-4 w-2/5" />
+                                    <div className="flex justify-between items-center pt-2">
+                                        <Skeleton className="h-6 w-1/3" />
+                                        <Skeleton className="h-9 w-9 rounded-full" />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
                 ) : filteredAndSortedProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredAndSortedProducts.map((product) => {
@@ -275,14 +290,14 @@ function Shop() {
 
 export default function ShopPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+             <div className="flex h-screen items-center justify-center">
+                <div className="text-center">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        }>
             <Shop />
         </Suspense>
     )
 }
-
-    
-
-    
-
-    

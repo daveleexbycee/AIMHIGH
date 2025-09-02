@@ -110,7 +110,7 @@ function OrderTracker() {
 
                     {loading && orderIdToFetch && (
                          <div className="text-center py-12">
-                            <Truck className="h-8 w-8 mx-auto animate-pulse" />
+                            <Truck className="h-8 w-8 mx-auto animate-pulse text-primary" />
                             <p className="mt-2 text-muted-foreground">Searching for your order...</p>
                         </div>
                     )}
@@ -166,7 +166,13 @@ function OrderTracker() {
 
 export default function TrackOrderPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+            <div className="flex h-screen items-center justify-center">
+                <div className="text-center">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        }>
             <OrderTracker />
         </Suspense>
     )

@@ -17,6 +17,7 @@ import { addOrder } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NIGERIA_STATES } from "@/lib/nigeria-data";
+import { LoaderCircle } from "lucide-react";
 
 
 export default function CheckoutPage() {
@@ -111,7 +112,7 @@ export default function CheckoutPage() {
   if (loading || !user) {
     return (
         <div className="flex h-screen items-center justify-center">
-            <p>Loading...</p>
+            <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
         </div>
     );
   }
