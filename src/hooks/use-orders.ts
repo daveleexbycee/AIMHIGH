@@ -28,6 +28,9 @@ export interface Order {
       zip: string;
   };
   shippingFee: number;
+  isPayOnDelivery?: boolean;
+  amountPaid?: number;
+  outstandingAmount?: number;
 }
 
 export function useOrders() {

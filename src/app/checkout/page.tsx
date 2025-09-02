@@ -8,7 +8,7 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCart } from "@/hooks/use-cart";
 import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -37,6 +37,17 @@ export default function CheckoutPage() {
   const availableLGAs = useMemo(() => {
     return selectedState ? selectedState.lgas : [];
   }, [selectedState]);
+
+  const amountDueNow = useMemo(() => {
+    if (paymentMethod === 'delivery') {
+        return shippingFee + (subtotal / 2);
+    }
+    return totalPrice;
+  }, [paymentMethod, shippingFee, subtotal, totalPrice]);
+
+  const outstandingAmount = useMemo(() => {
+    return totalPrice - amountDueNow;
+  }, [totalPrice, amountDueNow]);
 
 
   useEffect(() => {
@@ -82,7 +93,10 @@ export default function CheckoutPage() {
                 state: selectedState.name,
                 lga: selectedLGA,
                 zip: formData.get('zip') as string,
-            }
+            },
+            isPayOnDelivery: paymentMethod === 'delivery',
+            amountPaid: amountDueNow,
+            outstandingAmount: outstandingAmount
         });
 
         clearCart();
@@ -197,11 +211,16 @@ export default function CheckoutPage() {
                      <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-4">
                         <div className="flex items-center space-x-2 p-4 border rounded-md has-[[data-state=checked]]:border-primary">
                             <RadioGroupItem value="card" id="card" />
-                            <Label htmlFor="card" className="flex-1 cursor-pointer">Pay Online</Label>
+                            <Label htmlFor="card" className="flex-1 cursor-pointer">Pay Full Amount Online</Label>
                         </div>
-                        <div className="flex items-center space-x-2 p-4 border rounded-md has-[[data-state=checked]]:border-primary">
-                            <RadioGroupItem value="delivery" id="delivery" />
-                            <Label htmlFor="delivery" className="flex-1 cursor-pointer">Pay on Delivery</Label>
+                        <div className="flex flex-col p-4 border rounded-md has-[[data-state=checked]]:border-primary">
+                             <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="delivery" id="delivery" />
+                                <Label htmlFor="delivery" className="flex-1 cursor-pointer">Part-payment (Pay on Delivery)</Label>
+                             </div>
+                             <p className="text-sm text-muted-foreground mt-2 pl-6">
+                                Pay the shipping fee and 50% of the item cost now. Pay the outstanding balance on delivery.
+                             </p>
                         </div>
                     </RadioGroup>
                     {paymentMethod === 'card' && (
@@ -261,14 +280,26 @@ export default function CheckoutPage() {
                   <p>{selectedState ? `₦${shippingFee.toFixed(2)}` : 'Select state to see'}</p>
                 </div>
                 <Separator />
-                <div className="flex justify-between font-bold text-lg">
-                  <p>Total</p>
+                 <div className="flex justify-between font-bold text-lg">
+                  <p>Total Order Value</p>
                   <p>₦{totalPrice.toFixed(2)}</p>
                 </div>
               </CardContent>
+              <CardFooter className="flex flex-col gap-4 bg-secondary p-4">
+                 <div className="w-full flex justify-between font-bold text-lg text-primary">
+                    <p>Amount Due Now</p>
+                    <p>₦{amountDueNow.toFixed(2)}</p>
+                </div>
+                {paymentMethod === 'delivery' && outstandingAmount > 0 && (
+                    <div className="w-full flex justify-between text-sm text-muted-foreground">
+                        <p>Due on Delivery</p>
+                        <p>₦{outstandingAmount.toFixed(2)}</p>
+                    </div>
+                )}
+              </CardFooter>
             </Card>
             <Button type="submit" size="lg" className="w-full" disabled={cart.length === 0}>
-              Place Order
+              Pay ₦{amountDueNow.toFixed(2)} & Place Order
             </Button>
           </div>
         </form>
