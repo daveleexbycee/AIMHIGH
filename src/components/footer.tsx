@@ -99,7 +99,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-muted mt-8 pt-6 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} Aimhigh. All rights reserved.</p>
+          <p>&copy; 2015 Aimhigh. All rights reserved.</p>
         </div>
       </div>
     </footer>
