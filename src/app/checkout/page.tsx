@@ -78,12 +78,14 @@ export default function CheckoutPage() {
 
     const formData = new FormData(e.currentTarget);
     const orderId = `AIMHIGH-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const customerName = `${formData.get('firstName')} ${formData.get('lastName')}`;
+    const customerLocation = `${formData.get('city')}, ${selectedLGA}, ${selectedState.name} State.`;
 
     try {
         await addOrder({
             id: orderId,
             userId: user.uid,
-            customerName: `${formData.get('firstName')} ${formData.get('lastName')}`,
+            customerName: customerName,
             customerEmail: user.email!,
             items: cart,
             total: totalPrice,
@@ -112,7 +114,13 @@ export default function CheckoutPage() {
         clearCart();
         
         const whatsappNumber = "2348136523066";
-        const message = encodeURIComponent(`Hello Aimhigh! I've just placed an order. My Order ID is: ${orderId}`);
+        const messageBody = [
+          `Hello Aimhigh! I've just placed an order.`,
+          `My Order ID is: ${orderId}`,
+          `Name: ${customerName}`,
+          `Location: ${customerLocation}`
+        ].join('\n');
+        const message = encodeURIComponent(messageBody);
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
         // Redirect to WhatsApp
@@ -334,5 +342,3 @@ export default function CheckoutPage() {
     </>
   );
 }
-
-    
