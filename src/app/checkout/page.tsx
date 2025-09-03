@@ -28,6 +28,7 @@ export default function CheckoutPage() {
 
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [selectedLGA, setSelectedLGA] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleStateChange = (stateName: string) => {
     const state = NIGERIA_STATES.find(s => s.name === stateName) || null;
@@ -63,12 +64,15 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
     if (!user) {
         toast({ variant: "destructive", title: "You must be logged in to place an order."});
+        setIsSubmitting(false);
         return;
     }
     if (!selectedState || !selectedLGA) {
         toast({ variant: "destructive", title: "Please select your state and LGA for shipping."});
+        setIsSubmitting(false);
         return;
     }
 
@@ -99,20 +103,38 @@ export default function CheckoutPage() {
             amountPaid: amountDueNow,
             outstandingAmount: outstandingAmount
         });
+        
+        toast({
+            title: "Order Placed Successfully!",
+            description: `Your Order ID is ${orderId}. Redirecting to WhatsApp...`,
+        });
 
         clearCart();
-        router.push(`/order-confirmation/${orderId}`);
+        
+        const whatsappNumber = "2348136523066";
+        const message = encodeURIComponent(`Hello Aimhigh! I've just placed an order. My Order ID is: ${orderId}`);
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+
+        // Redirect to WhatsApp
+        window.location.href = whatsappUrl;
 
     } catch (error) {
         console.error("Failed to place order:", error);
         toast({ variant: "destructive", title: "Failed to place order. Please try again."})
+        setIsSubmitting(false);
     }
   };
 
   if (loading || !user) {
     return (
         <div className="flex h-screen items-center justify-center">
-            <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+            <div className="flex flex-col items-center justify-center h-full">
+                <div className="p-4 bg-primary/10 rounded-full animate-pulse">
+                    <div className="p-3 bg-primary/20 rounded-full animate-pulse">
+                         <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                </div>
+            </div>
         </div>
     );
   }
@@ -299,8 +321,12 @@ export default function CheckoutPage() {
                 )}
               </CardFooter>
             </Card>
-            <Button type="submit" size="lg" className="w-full" disabled={cart.length === 0}>
-              Pay ₦{amountDueNow.toFixed(2)} & Place Order
+            <Button type="submit" size="lg" className="w-full" disabled={cart.length === 0 || isSubmitting}>
+                {isSubmitting ? (
+                    <LoaderCircle className="animate-spin" />
+                ) : (
+                    `Pay ₦${amountDueNow.toFixed(2)} & Place Order`
+                )}
             </Button>
           </div>
         </form>
@@ -308,3 +334,5 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+    
