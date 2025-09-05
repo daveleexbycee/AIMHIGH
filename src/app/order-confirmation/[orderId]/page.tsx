@@ -15,8 +15,8 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
 
     useEffect(() => {
         toast({
-            title: "Thank you for shopping with us!",
-            description: "Don't forget to write down your review.",
+            title: "Order Confirmed!",
+            description: "Thank you for your purchase.",
         });
     }, [toast]);
     
@@ -34,7 +34,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
             </CardHeader>
             <CardContent className="space-y-6">
                 <p className="text-muted-foreground">
-                    Your order has been placed successfully. You can track its progress using your order ID.
+                    Your order has been placed successfully. You can track its progress using your order ID. A confirmation has been sent to your email.
                 </p>
                 <div className="bg-secondary p-4 rounded-md">
                     <p className="text-sm text-muted-foreground">Your Order ID is:</p>
@@ -43,7 +43,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
                 <div className="flex gap-4 justify-center flex-wrap">
                     <Button asChild>
                         <Link href="/shop">
-                           <ShoppingBag className="mr-2" /> Continue Shopping
+                           <ShoppingBag className="mr-2 h-4 w-4" /> Continue Shopping
                         </Link>
                     </Button>
                     <Button variant="outline" asChild>
@@ -53,7 +53,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
                     </Button>
                      <Button variant="secondary" className="w-full sm:w-auto" asChild>
                         <Link href="/orders">
-                            <History className="mr-2" /> View Order History
+                            <History className="mr-2 h-4 w-4" /> View Order History
                         </Link>
                     </Button>
                 </div>
@@ -63,3 +63,5 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
     </>
   );
 }
+
+    

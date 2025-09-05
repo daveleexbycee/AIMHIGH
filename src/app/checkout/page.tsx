@@ -17,7 +17,17 @@ import { addOrder, updateUserLocationInOrder } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NIGERIA_STATES } from "@/lib/nigeria-data";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, MessageSquare } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+  } from "@/components/ui/alert-dialog"
 
 
 export default function CheckoutPage() {
@@ -29,6 +39,9 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [selectedLGA, setSelectedLGA] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+  const [confirmationData, setConfirmationData] = useState<{orderId: string, whatsappUrl: string} | null>(null);
+
 
   const handleStateChange = (stateName: string) => {
     const state = NIGERIA_STATES.find(s => s.name === stateName) || null;
@@ -121,7 +134,7 @@ export default function CheckoutPage() {
         
         toast({
             title: "Order Placed Successfully!",
-            description: `Your Order ID is ${orderId}. Redirecting to WhatsApp...`,
+            description: `Your Order ID is ${orderId}.`,
         });
 
         clearCart();
@@ -136,8 +149,9 @@ export default function CheckoutPage() {
         const message = encodeURIComponent(messageBody);
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
-        // Redirect to WhatsApp
-        window.location.href = whatsappUrl;
+        setConfirmationData({ orderId, whatsappUrl });
+        setShowConfirmationDialog(true);
+        setIsSubmitting(false);
 
     } catch (error) {
         console.error("Failed to place order:", error);
@@ -145,6 +159,21 @@ export default function CheckoutPage() {
         setIsSubmitting(false);
     }
   };
+  
+  const handleConfirmationNo = () => {
+    if (confirmationData) {
+        router.push(`/order-confirmation/${confirmationData.orderId}`);
+    }
+    setShowConfirmationDialog(false);
+  };
+
+  const handleConfirmationYes = () => {
+    if (confirmationData) {
+        window.location.href = confirmationData.whatsappUrl;
+    }
+    setShowConfirmationDialog(false);
+  };
+
 
   if (loading || !user) {
     return (
@@ -352,6 +381,25 @@ export default function CheckoutPage() {
           </div>
         </form>
       </main>
+      <AlertDialog open={showConfirmationDialog} onOpenChange={setShowConfirmationDialog}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+                <MessageSquare className="text-primary" />
+                Talk to us directly?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+                Do you want to talk to us directly on WhatsApp for your delivery? This is the fastest way to arrange delivery.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleConfirmationNo}>No, Thanks</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmationYes}>Yes, Chat Now</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
     </>
   );
 }
+
+    
