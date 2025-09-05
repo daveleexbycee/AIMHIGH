@@ -13,7 +13,7 @@ import { useOrder } from "@/hooks/use-order";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import Map, { Marker, Layer, Source } from 'react-map-gl';
+import Map, { Marker, Layer, Source, useMap } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { updateUserLocationInOrder } from "@/lib/firestore";
 import polyline from '@mapbox/polyline';
@@ -81,6 +81,51 @@ function OrderStatusStepper({ status }: { status: string }) {
         </div>
     );
 }
+
+function MapComponent({ order, route, viewport }: { order: any; route: any; viewport: any }) {
+    const { current: map } = useMap();
+    const [isStyleLoaded, setIsStyleLoaded] = useState(false);
+
+    useEffect(() => {
+        if (map) {
+            map.on('style.load', () => setIsStyleLoaded(true));
+        }
+    }, [map]);
+
+    return (
+        <Map
+            mapboxAccessToken={MAPBOX_TOKEN}
+            initialViewState={viewport}
+            style={{ width: '100%', height: '100%' }}
+            mapStyle="mapbox://styles/echilord/cmf7c1uy9000m01sdg37522su"
+        >
+            {order.userLocation && (
+                <Marker longitude={order.userLocation.lng} latitude={order.userLocation.lat} color="red" />
+            )}
+            {order.driverLocation && (
+                <Marker longitude={order.driverLocation.lng} latitude={order.driverLocation.lat} color="blue" />
+            )}
+            {isStyleLoaded && route && (
+                <Source id="route" type="geojson" data={route}>
+                    <Layer
+                        id="route"
+                        type="line"
+                        source="route"
+                        layout={{
+                            'line-join': 'round',
+                            'line-cap': 'round'
+                        }}
+                        paint={{
+                            'line-color': '#007cbf',
+                            'line-width': 5
+                        }}
+                    />
+                </Source>
+            )}
+        </Map>
+    );
+}
+
 
 function OrderTracker() {
     const router = useRouter();
@@ -203,36 +248,7 @@ function OrderTracker() {
                             </CardHeader>
                             <CardContent className="space-y-8">
                                 <div className="relative h-96 w-full rounded-lg overflow-hidden">
-                                    <Map
-                                        mapboxAccessToken={MAPBOX_TOKEN}
-                                        initialViewState={viewport}
-                                        style={{width: '100%', height: '100%'}}
-                                        mapStyle="mapbox://styles/echilord/cmf7c1uy9000m01sdg37522su"
-                                    >
-                                        {order.userLocation && (
-                                            <Marker longitude={order.userLocation.lng} latitude={order.userLocation.lat} color="red" />
-                                        )}
-                                        {order.driverLocation && (
-                                            <Marker longitude={order.driverLocation.lng} latitude={order.driverLocation.lat} color="blue" />
-                                        )}
-                                        {route && (
-                                            <Source id="route" type="geojson" data={route}>
-                                                <Layer
-                                                    id="route"
-                                                    type="line"
-                                                    source="route"
-                                                    layout={{
-                                                        'line-join': 'round',
-                                                        'line-cap': 'round'
-                                                    }}
-                                                    paint={{
-                                                        'line-color': '#007cbf',
-                                                        'line-width': 5
-                                                    }}
-                                                />
-                                            </Source>
-                                        )}
-                                    </Map>
+                                     <MapComponent order={order} route={route} viewport={viewport} />
                                 </div>
                                 <OrderStatusStepper status={order.status} />
                                 {routeInfo && (
