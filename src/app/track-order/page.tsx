@@ -1,25 +1,38 @@
 
 "use client";
 
-import { useState, Suspense, useEffect } from "react";
+import { useState, Suspense, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { PackageSearch, CircleCheck, Truck, Package, PackageOpen } from "lucide-react";
+import { PackageSearch, CircleCheck, Truck, Package, PackageOpen, Route } from "lucide-react";
 import { useOrder } from "@/hooks/use-order";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import Map, { Marker } from 'react-map-gl';
+import Map, { Marker, Layer, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { updateUserLocationInOrder } from "@/lib/firestore";
+import polyline from '@mapbox/polyline';
 
-const MAPBOX_TOKEN = "pk.eyJ1IjoiZWNoaWxvcmQiLCJhIjoiY21mNzh0ZnkyMG5saTJtczllajdhbHo1OSJ9.07buYJn6Z-OlYJHDpIYzIw";
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN!;
 
 const orderStatuses = ["Pending", "Shipped", "Fulfilled", "Cancelled"];
+
+async function getDirections(start: {lng: number, lat: number}, end: {lng: number, lat: number}) {
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.lng},${start.lat};${end.lng},${end.lat}?geometries=polyline&access_token=${MAPBOX_TOKEN}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.routes[0];
+    } catch (error) {
+        console.error("Error fetching directions:", error);
+        return null;
+    }
+}
 
 function OrderStatusStepper({ status }: { status: string }) {
     const currentIndex = orderStatuses.indexOf(status);
@@ -76,6 +89,8 @@ function OrderTracker() {
     const orderIdToFetch = searchParams.get('id');
 
     const { order, loading, error } = useOrder(orderIdToFetch);
+    const [route, setRoute] = useState<any>(null);
+    const [routeInfo, setRouteInfo] = useState<{distance: number, duration: number} | null>(null);
 
     const handleTrackOrder = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -96,18 +111,37 @@ function OrderTracker() {
             );
         }
     }, [order]);
+
+    useEffect(() => {
+        if (order?.driverLocation && order.userLocation) {
+            getDirections(order.driverLocation, order.userLocation).then(data => {
+                if (data) {
+                    const decoded = polyline.toGeoJSON(data.geometry);
+                    setRoute({
+                        type: 'Feature',
+                        properties: {},
+                        geometry: decoded,
+                    });
+                    setRouteInfo({ distance: data.distance, duration: data.duration });
+                }
+            })
+        }
+    }, [order?.driverLocation, order?.userLocation]);
     
-    const viewport = order?.userLocation 
-    ? {
-        latitude: order.userLocation.lat,
-        longitude: order.userLocation.lng,
-        zoom: 12
-    }
-    : {
-        latitude: 6.5244, // Default to Lagos
-        longitude: 3.3792,
-        zoom: 10
-    };
+    const viewport = useMemo(() => {
+        if (order?.userLocation) {
+            return {
+                latitude: order.userLocation.lat,
+                longitude: order.userLocation.lng,
+                zoom: 12
+            };
+        }
+        return {
+            latitude: 6.5244, // Default to Lagos
+            longitude: 3.3792,
+            zoom: 10
+        };
+    }, [order?.userLocation]);
 
 
     return (
@@ -141,8 +175,12 @@ function OrderTracker() {
 
                     {loading && orderIdToFetch && (
                          <div className="text-center py-12">
-                            <Truck className="h-8 w-8 mx-auto animate-pulse text-primary" />
-                            <p className="mt-2 text-muted-foreground">Searching for your order...</p>
+                            <div className="p-4 bg-primary/10 rounded-full animate-pulse inline-block">
+                                <div className="p-3 bg-primary/20 rounded-full animate-pulse">
+                                    <Truck className="h-8 w-8 text-primary" />
+                                </div>
+                            </div>
+                            <p className="mt-4 text-muted-foreground">Searching for your order...</p>
                         </div>
                     )}
 
@@ -164,7 +202,7 @@ function OrderTracker() {
                                 <CardDescription>Showing status for order: <span className="font-bold text-primary">{order.id}</span></CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-8">
-                                <div className="relative h-96 w-full">
+                                <div className="relative h-96 w-full rounded-lg overflow-hidden">
                                     <Map
                                         mapboxAccessToken={MAPBOX_TOKEN}
                                         initialViewState={viewport}
@@ -177,9 +215,41 @@ function OrderTracker() {
                                         {order.driverLocation && (
                                             <Marker longitude={order.driverLocation.lng} latitude={order.driverLocation.lat} color="blue" />
                                         )}
+                                        {route && (
+                                            <Source id="route" type="geojson" data={route}>
+                                                <Layer
+                                                    id="route"
+                                                    type="line"
+                                                    source="route"
+                                                    layout={{
+                                                        'line-join': 'round',
+                                                        'line-cap': 'round'
+                                                    }}
+                                                    paint={{
+                                                        'line-color': '#007cbf',
+                                                        'line-width': 5
+                                                    }}
+                                                />
+                                            </Source>
+                                        )}
                                     </Map>
                                 </div>
                                 <OrderStatusStepper status={order.status} />
+                                {routeInfo && (
+                                    <Card className="bg-secondary/50">
+                                        <CardContent className="p-4 flex items-center justify-around text-center">
+                                            <div>
+                                                <p className="text-sm text-muted-foreground">Est. Time</p>
+                                                <p className="font-bold text-lg">{Math.round(routeInfo.duration / 60)} mins</p>
+                                            </div>
+                                            <Separator orientation="vertical" className="h-10" />
+                                            <div>
+                                                <p className="text-sm text-muted-foreground">Distance</p>
+                                                <p className="font-bold text-lg">{(routeInfo.distance / 1000).toFixed(1)} km</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )}
                                 <Separator />
                                 <div className="space-y-4">
                                     <h3 className="font-semibold">Order Summary</h3>
@@ -214,8 +284,10 @@ export default function TrackOrderPage() {
     return (
         <Suspense fallback={
             <div className="flex h-screen items-center justify-center">
-                <div className="text-center">
-                    <p>Loading...</p>
+                 <div className="p-4 bg-primary/10 rounded-full animate-pulse inline-block">
+                    <div className="p-3 bg-primary/20 rounded-full animate-pulse">
+                        <PackageSearch className="h-8 w-8 text-primary" />
+                    </div>
                 </div>
             </div>
         }>

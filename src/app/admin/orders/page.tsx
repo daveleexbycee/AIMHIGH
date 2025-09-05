@@ -34,7 +34,6 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
-    DialogClose,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button";
 import { updateOrderStatus, updateDriverLocation } from "@/lib/firestore";
@@ -71,6 +70,7 @@ export default function AdminOrdersPage() {
                 async (position) => {
                     const { latitude, longitude } = position.coords;
                     await updateDriverLocation(orderId, { lat: latitude, lng: longitude });
+                    await updateOrderStatus(orderId, 'Shipped'); // Also mark as shipped
                 },
                 (error) => {
                     console.error("Error watching position:", error);
@@ -95,6 +95,17 @@ export default function AdminOrdersPage() {
         setIsTracking(false);
         toast({ title: "Live tracking stopped." });
     };
+
+    useEffect(() => {
+        // Stop tracking if the selected order changes or dialog is closed
+        if (selectedOrder && !isTracking) return;
+        if (!selectedOrder && isTracking && watchIdRef.current) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
+            setIsTracking(false);
+        }
+    }, [selectedOrder, isTracking]);
+
 
     useEffect(() => {
         return () => {
@@ -212,12 +223,12 @@ export default function AdminOrdersPage() {
                             <Separator />
                             <div className="space-y-2">
                                 <h4 className="font-semibold">Live Tracking</h4>
-                                {isTracking ? (
+                                {isTracking && selectedOrder.driverLocation ? (
                                     <Button variant="destructive" onClick={() => stopTracking(selectedOrder.id)}>
                                         <StopCircle className="mr-2 h-4 w-4" /> Stop Delivery
                                     </Button>
                                 ) : (
-                                    <Button onClick={() => startTracking(selectedOrder.id)}>
+                                    <Button onClick={() => startTracking(selectedOrder.id)} disabled={selectedOrder.status === 'Fulfilled' || selectedOrder.status === 'Cancelled'}>
                                         <PlayCircle className="mr-2 h-4 w-4" /> Start Delivery
                                     </Button>
                                 )}
@@ -225,7 +236,7 @@ export default function AdminOrdersPage() {
                             <Separator />
                             <div className="space-y-2">
                                 <h4 className="font-semibold">Order Items</h4>
-                                <div className="space-y-4">
+                                <div className="space-y-4 max-h-60 overflow-y-auto pr-4">
                                      {selectedOrder.items.map(item => (
                                         <div key={item.id} className="flex items-center justify-between">
                                             <div className="flex items-center gap-4">
