@@ -207,7 +207,7 @@ function OrderTracker() {
                                         mapboxAccessToken={MAPBOX_TOKEN}
                                         initialViewState={viewport}
                                         style={{width: '100%', height: '100%'}}
-                                        mapStyle="mapbox://styles/mapbox/streets-v11"
+                                        mapStyle="mapbox://styles/echilord/cmf7c1uy9000m01sdg37522su"
                                     >
                                         {order.userLocation && (
                                             <Marker longitude={order.userLocation.lng} latitude={order.userLocation.lat} color="red" />
