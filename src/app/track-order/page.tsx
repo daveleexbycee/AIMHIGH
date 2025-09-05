@@ -18,7 +18,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { updateUserLocationInOrder } from "@/lib/firestore";
 import polyline from '@mapbox/polyline';
 
-const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN!;
+const MAPBOX_TOKEN = "pk.eyJ1IjoiZWNoaWxvcmQiLCJhIjoiY21mNzh0ZnkyMG5saTJtczllajdhbHo1OSJ9.07buYJn6Z-OlYJHDpIYzIw";
 
 const orderStatuses = ["Pending", "Shipped", "Fulfilled", "Cancelled"];
 
@@ -175,7 +175,7 @@ function OrderTracker() {
 
                     {loading && orderIdToFetch && (
                          <div className="text-center py-12">
-                            <div className="p-4 bg-primary/10 rounded-full animate-pulse inline-block">
+                             <div className="p-4 bg-primary/10 rounded-full animate-pulse inline-block">
                                 <div className="p-3 bg-primary/20 rounded-full animate-pulse">
                                     <Truck className="h-8 w-8 text-primary" />
                                 </div>
