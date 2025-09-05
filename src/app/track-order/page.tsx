@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,11 @@ import { useOrder } from "@/hooks/use-order";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import Map, { Marker } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { updateUserLocationInOrder } from "@/lib/firestore";
+
+const MAPBOX_TOKEN = "pk.eyJ1IjoiZWNoaWxvcmQiLCJhIjoiY21mNzh0ZnkyMG5saTJtczllajdhbHo1OSJ9.07buYJn6Z-OlYJHDpIYzIw";
 
 const orderStatuses = ["Pending", "Shipped", "Fulfilled", "Cancelled"];
 
@@ -79,11 +84,37 @@ function OrderTracker() {
         }
     };
 
+    useEffect(() => {
+        if (order && !order.userLocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    updateUserLocationInOrder(order.id, { lat: latitude, lng: longitude });
+                },
+                (err) => console.error("Could not get user location", err),
+                { enableHighAccuracy: true }
+            );
+        }
+    }, [order]);
+    
+    const viewport = order?.userLocation 
+    ? {
+        latitude: order.userLocation.lat,
+        longitude: order.userLocation.lng,
+        zoom: 12
+    }
+    : {
+        latitude: 6.5244, // Default to Lagos
+        longitude: 3.3792,
+        zoom: 10
+    };
+
+
     return (
         <>
             <Header />
             <main className="container mx-auto px-4 py-12">
-                <div className="max-w-2xl mx-auto">
+                <div className="max-w-4xl mx-auto">
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-2xl font-headline flex items-center gap-2">
@@ -133,6 +164,21 @@ function OrderTracker() {
                                 <CardDescription>Showing status for order: <span className="font-bold text-primary">{order.id}</span></CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-8">
+                                <div className="relative h-96 w-full">
+                                    <Map
+                                        mapboxAccessToken={MAPBOX_TOKEN}
+                                        initialViewState={viewport}
+                                        style={{width: '100%', height: '100%'}}
+                                        mapStyle="mapbox://styles/mapbox/streets-v11"
+                                    >
+                                        {order.userLocation && (
+                                            <Marker longitude={order.userLocation.lng} latitude={order.userLocation.lat} color="red" />
+                                        )}
+                                        {order.driverLocation && (
+                                            <Marker longitude={order.driverLocation.lng} latitude={order.driverLocation.lat} color="blue" />
+                                        )}
+                                    </Map>
+                                </div>
                                 <OrderStatusStepper status={order.status} />
                                 <Separator />
                                 <div className="space-y-4">

@@ -13,7 +13,7 @@ import { useCart } from "@/hooks/use-cart";
 import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import { addOrder } from "@/lib/firestore";
+import { addOrder, updateUserLocationInOrder } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NIGERIA_STATES } from "@/lib/nigeria-data";
@@ -105,6 +105,19 @@ export default function CheckoutPage() {
             amountPaid: amountDueNow,
             outstandingAmount: outstandingAmount
         });
+
+        // Get user location and add it to the order
+         if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    updateUserLocationInOrder(orderId, { lat: latitude, lng: longitude });
+                },
+                (error) => {
+                    console.warn("Could not get user location for order:", error.message);
+                }
+            );
+        }
         
         toast({
             title: "Order Placed Successfully!",

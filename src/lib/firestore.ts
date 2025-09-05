@@ -28,10 +28,25 @@ export const addOrder = async (order: any) => {
     return await setDoc(orderDoc, order);
 };
 
-export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
+export const updateOrderStatus = async (orderId: string, status: Order['status'], driverLocation: { lat: number, lng: number } | null = null) => {
     const orderDoc = doc(db, 'orders', orderId);
-    return await updateDoc(orderDoc, { status: status });
+    const updateData: { status: Order['status'], driverLocation?: any } = { status: status };
+    if (driverLocation) {
+        updateData.driverLocation = driverLocation;
+    }
+    return await updateDoc(orderDoc, updateData);
 }
+
+export const updateUserLocationInOrder = async (orderId: string, userLocation: { lat: number, lng: number }) => {
+    const orderDoc = doc(db, 'orders', orderId);
+    return await updateDoc(orderDoc, { userLocation });
+}
+
+export const updateDriverLocation = async (orderId: string, location: { lat: number, lng: number } | null) => {
+    const orderDoc = doc(db, 'orders', orderId);
+    return await updateDoc(orderDoc, { driverLocation: location });
+};
+
 
 export const addUser = async (user: any) => {
     const userDoc = doc(usersCollection, user.uid);
