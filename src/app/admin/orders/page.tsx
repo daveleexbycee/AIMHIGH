@@ -70,12 +70,15 @@ export default function AdminOrdersPage() {
                 async (position) => {
                     const { latitude, longitude } = position.coords;
                     await updateDriverLocation(orderId, { lat: latitude, lng: longitude });
-                    await updateOrderStatus(orderId, 'Shipped'); // Also mark as shipped
+                    // Also mark as shipped if it's currently pending
+                    if (selectedOrder?.status === 'Pending') {
+                        await updateOrderStatus(orderId, 'Shipped'); 
+                    }
                 },
                 (error) => {
                     console.error("Error watching position:", error);
                     toast({ variant: "destructive", title: "Location Error", description: "Could not get your location." });
-                    stopTracking(orderId);
+                    stopTracking();
                 },
                 { enableHighAccuracy: true }
             );
@@ -86,25 +89,27 @@ export default function AdminOrdersPage() {
         }
     };
 
-    const stopTracking = (orderId: string) => {
+    const stopTracking = () => {
         if (watchIdRef.current) {
             navigator.geolocation.clearWatch(watchIdRef.current);
             watchIdRef.current = null;
         }
-        updateDriverLocation(orderId, null);
+        if (selectedOrder) {
+            updateDriverLocation(selectedOrder.id, null);
+        }
         setIsTracking(false);
         toast({ title: "Live tracking stopped." });
     };
 
     useEffect(() => {
-        // Stop tracking if the selected order changes or dialog is closed
-        if (selectedOrder && !isTracking) return;
-        if (!selectedOrder && isTracking && watchIdRef.current) {
-            navigator.geolocation.clearWatch(watchIdRef.current);
-            watchIdRef.current = null;
-            setIsTracking(false);
+        // Automatically check if the selected order is being tracked
+        setIsTracking(!!(selectedOrder && selectedOrder.driverLocation));
+
+        // Stop tracking if dialog is closed
+        if (!selectedOrder && watchIdRef.current) {
+           stopTracking();
         }
-    }, [selectedOrder, isTracking]);
+    }, [selectedOrder]);
 
 
     useEffect(() => {
@@ -223,8 +228,8 @@ export default function AdminOrdersPage() {
                             <Separator />
                             <div className="space-y-2">
                                 <h4 className="font-semibold">Live Tracking</h4>
-                                {isTracking && selectedOrder.driverLocation ? (
-                                    <Button variant="destructive" onClick={() => stopTracking(selectedOrder.id)}>
+                                {isTracking ? (
+                                    <Button variant="destructive" onClick={stopTracking}>
                                         <StopCircle className="mr-2 h-4 w-4" /> Stop Delivery
                                     </Button>
                                 ) : (

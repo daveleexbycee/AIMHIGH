@@ -44,9 +44,11 @@ import { useToast } from "@/hooks/use-toast";
 import { AdminSalesChart } from "@/components/admin-sales-chart";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
+import { useRecentOrders } from "@/hooks/use-recent-orders";
 
 export default function AdminDashboard() {
-  const { orders, loading: ordersLoading } = useOrders();
+  const { orders, loading: ordersLoading } = useOrders(); // all orders for stats
+  const { recentOrders, loading: recentOrdersLoading } = useRecentOrders(5); // Only 5 recent for table
   const { users, loading: usersLoading } = useUsers();
   const { toast } = useToast();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -67,7 +69,7 @@ export default function AdminDashboard() {
     }
   }
 
-  if (ordersLoading || usersLoading) {
+  if (ordersLoading || usersLoading || recentOrdersLoading) {
     return (
         <div className="flex flex-col items-center justify-center h-full">
             <div className="p-4 bg-primary/10 rounded-full animate-pulse">
@@ -85,8 +87,6 @@ export default function AdminDashboard() {
   const totalRevenue = fulfilledOrders.reduce((sum, order) => sum + order.total, 0);
 
   const totalSales = fulfilledOrders.length;
-
-  const recentOrders = orders.slice(0, 5);
 
     return (
       <div className="space-y-8">
@@ -252,5 +252,3 @@ export default function AdminDashboard() {
       </div>
     )
   }
-
-    
