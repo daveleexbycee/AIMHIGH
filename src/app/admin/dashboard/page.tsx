@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     Card,
     CardContent,
@@ -21,7 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { useOrders, Order } from "@/hooks/use-orders";
 import { useUsers } from "@/hooks/use-users";
-import { DollarSign, Users, CreditCard, MoreHorizontal, LoaderCircle, PackageSearch, X } from "lucide-react";
+import { DollarSign, Users, CreditCard, MoreHorizontal, LoaderCircle, PackageSearch, X, PlayCircle, StopCircle } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -39,7 +39,7 @@ import {
     DialogClose,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button";
-import { updateOrderStatus } from "@/lib/firestore";
+import { updateOrderStatus, updateDriverLocation } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { AdminSalesChart } from "@/components/admin-sales-chart";
 import { Separator } from "@/components/ui/separator";
@@ -52,6 +52,8 @@ export default function AdminDashboard() {
   const { users, loading: usersLoading } = useUsers();
   const { toast } = useToast();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isTracking, setIsTracking] = useState(false);
+  const watchIdRef = useRef<number | null>(null);
 
   const handleStatusChange = async (orderId: string, status: 'Pending' | 'Shipped' | 'Fulfilled' | 'Cancelled') => {
     try {
@@ -68,6 +70,58 @@ export default function AdminDashboard() {
         })
     }
   }
+
+  const startTracking = (orderId: string) => {
+    if (navigator.geolocation) {
+        watchIdRef.current = navigator.geolocation.watchPosition(
+            async (position) => {
+                const { latitude, longitude } = position.coords;
+                await updateDriverLocation(orderId, { lat: latitude, lng: longitude });
+                if (selectedOrder?.status === 'Pending') {
+                    await updateOrderStatus(orderId, 'Shipped'); 
+                }
+            },
+            (error) => {
+                console.error("Error watching position:", error);
+                toast({ variant: "destructive", title: "Location Error", description: "Could not get your location." });
+                stopTracking();
+            },
+            { enableHighAccuracy: true }
+        );
+        setIsTracking(true);
+        toast({ title: "Live tracking started!" });
+    } else {
+        toast({ variant: "destructive", title: "Geolocation not supported" });
+    }
+  };
+
+    const stopTracking = () => {
+        if (watchIdRef.current) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
+        }
+        if (selectedOrder) {
+            updateDriverLocation(selectedOrder.id, null);
+        }
+        setIsTracking(false);
+        toast({ title: "Live tracking stopped." });
+    };
+
+    useEffect(() => {
+        setIsTracking(!!(selectedOrder && selectedOrder.driverLocation));
+        if (!selectedOrder && watchIdRef.current) {
+           stopTracking();
+        }
+    }, [selectedOrder]);
+
+
+    useEffect(() => {
+        return () => {
+            if (watchIdRef.current) {
+                navigator.geolocation.clearWatch(watchIdRef.current);
+            }
+        };
+    }, []);
 
   if (ordersLoading || usersLoading || recentOrdersLoading) {
     return (
@@ -226,6 +280,19 @@ export default function AdminDashboard() {
                             </div>
                             <Separator />
                             <div className="space-y-2">
+                                <h4 className="font-semibold">Live Tracking</h4>
+                                {isTracking ? (
+                                    <Button variant="destructive" onClick={stopTracking}>
+                                        <StopCircle className="mr-2 h-4 w-4" /> Stop Delivery
+                                    </Button>
+                                ) : (
+                                    <Button onClick={() => startTracking(selectedOrder.id)} disabled={selectedOrder.status === 'Fulfilled' || selectedOrder.status === 'Cancelled'}>
+                                        <PlayCircle className="mr-2 h-4 w-4" /> Start Delivery
+                                    </Button>
+                                )}
+                            </div>
+                            <Separator />
+                            <div className="space-y-2">
                                 <h4 className="font-semibold">Order Items</h4>
                                 <div className="space-y-4">
                                      {selectedOrder.items.map(item => (
@@ -252,3 +319,5 @@ export default function AdminDashboard() {
       </div>
     )
   }
+
+    
