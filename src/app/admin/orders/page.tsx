@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
     Card,
     CardContent,
@@ -45,9 +45,13 @@ import { OrderTrackingMap } from "@/components/order-tracking-map";
 export default function AdminOrdersPage() {
     const { orders, loading } = useOrders();
     const { toast } = useToast();
-    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
     const [isTracking, setIsTracking] = useState(false);
-    const watchIdRef = useRef<number | null>(null);
+    const watchIdRef = useState<number | null>(null);
+
+    const selectedOrder = useMemo(() => {
+        return orders.find(order => order.id === selectedOrderId) || null;
+    }, [selectedOrderId, orders]);
 
     const handleStatusChange = async (orderId: string, status: 'Pending' | 'Shipped' | 'Fulfilled' | 'Cancelled') => {
         try {
@@ -173,7 +177,7 @@ export default function AdminOrdersPage() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem onClick={() => setSelectedOrder(order)}>
+                                            <DropdownMenuItem onClick={() => setSelectedOrderId(order.id)}>
                                                 <PackageSearch className="mr-2 h-4 w-4" />
                                                 View Details
                                             </DropdownMenuItem>
@@ -193,7 +197,7 @@ export default function AdminOrdersPage() {
             </CardContent>
         </Card>
 
-        <Dialog open={!!selectedOrder} onOpenChange={(isOpen) => !isOpen && setSelectedOrder(null)}>
+        <Dialog open={!!selectedOrder} onOpenChange={(isOpen) => !isOpen && setSelectedOrderId(null)}>
             <DialogContent className="sm:max-w-4xl">
                 {selectedOrder && (
                      <>
