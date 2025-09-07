@@ -40,6 +40,7 @@ import { updateOrderStatus, updateDriverLocation } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
+import { OrderTrackingMap } from "@/components/order-tracking-map";
   
 export default function AdminOrdersPage() {
     const { orders, loading } = useOrders();
@@ -193,17 +194,17 @@ export default function AdminOrdersPage() {
         </Card>
 
         <Dialog open={!!selectedOrder} onOpenChange={(isOpen) => !isOpen && setSelectedOrder(null)}>
-            <DialogContent className="sm:max-w-2xl">
+            <DialogContent className="sm:max-w-4xl">
                 {selectedOrder && (
-                    <>
+                     <>
                         <DialogHeader>
                             <DialogTitle>Order Details</DialogTitle>
                             <DialogDescription>
                                 Order ID: {selectedOrder.id}
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="grid gap-6 py-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+                            <div className="space-y-6">
                                 <div className="space-y-2">
                                     <h4 className="font-semibold">Shipping Address</h4>
                                     <address className="not-italic text-muted-foreground">
@@ -224,39 +225,45 @@ export default function AdminOrdersPage() {
                                         <p>Method: {selectedOrder.isPayOnDelivery ? "Part-payment (Delivery)" : "Paid Online"}</p>
                                     </div>
                                 </div>
-                            </div>
-                            <Separator />
-                            <div className="space-y-2">
-                                <h4 className="font-semibold">Live Tracking</h4>
-                                {isTracking ? (
-                                    <Button variant="destructive" onClick={stopTracking}>
-                                        <StopCircle className="mr-2 h-4 w-4" /> Stop Delivery
-                                    </Button>
-                                ) : (
-                                    <Button onClick={() => startTracking(selectedOrder.id)} disabled={selectedOrder.status === 'Fulfilled' || selectedOrder.status === 'Cancelled'}>
-                                        <PlayCircle className="mr-2 h-4 w-4" /> Start Delivery
-                                    </Button>
-                                )}
-                            </div>
-                            <Separator />
-                            <div className="space-y-2">
-                                <h4 className="font-semibold">Order Items</h4>
-                                <div className="space-y-4 max-h-60 overflow-y-auto pr-4">
-                                     {selectedOrder.items.map(item => (
-                                        <div key={item.id} className="flex items-center justify-between">
-                                            <div className="flex items-center gap-4">
-                                            <div className="relative h-16 w-16 rounded-md overflow-hidden">
-                                                <Image src={item.image} alt={item.name} fill className="object-cover" />
+                                <Separator />
+                                <div className="space-y-2">
+                                    <h4 className="font-semibold">Order Items</h4>
+                                    <div className="space-y-4 max-h-48 overflow-y-auto pr-2">
+                                        {selectedOrder.items.map(item => (
+                                            <div key={item.id} className="flex items-center justify-between">
+                                                <div className="flex items-center gap-4">
+                                                <div className="relative h-16 w-16 rounded-md overflow-hidden">
+                                                    <Image src={item.image} alt={item.name} fill className="object-cover" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">{item.name}</p>
+                                                    <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                                                </div>
+                                                </div>
+                                                <p>₦{(item.price * item.quantity).toFixed(2)}</p>
                                             </div>
-                                            <div>
-                                                <p className="font-medium">{item.name}</p>
-                                                <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                                            </div>
-                                            </div>
-                                            <p>₦{(item.price * item.quantity).toFixed(2)}</p>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
+                            </div>
+                             <div className="space-y-4">
+                                <h4 className="font-semibold">Live Tracking</h4>
+                                <div className="flex items-center gap-4">
+                                    {isTracking ? (
+                                        <Button variant="destructive" onClick={stopTracking} className="w-full">
+                                            <StopCircle className="mr-2 h-4 w-4" /> Stop Delivery
+                                        </Button>
+                                    ) : (
+                                        <Button onClick={() => startTracking(selectedOrder.id)} disabled={selectedOrder.status === 'Fulfilled' || selectedOrder.status === 'Cancelled'} className="w-full">
+                                            <PlayCircle className="mr-2 h-4 w-4" /> Start Delivery
+                                        </Button>
+                                    )}
+                                </div>
+                                {(isTracking || selectedOrder.driverLocation || selectedOrder.userLocation) && (
+                                     <div className="mt-4">
+                                        <OrderTrackingMap order={selectedOrder} />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </>
