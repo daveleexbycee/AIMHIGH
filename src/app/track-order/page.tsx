@@ -140,7 +140,15 @@ function OrderTracker() {
                                 <CardDescription>Showing status for order: <span className="font-bold text-primary">{order.id}</span></CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-8">
-                                <OrderTrackingMap order={order} />
+                                {order.driverLocation ? (
+                                    <OrderTrackingMap order={order} />
+                                 ) : (
+                                    <div className="text-center py-8 bg-secondary rounded-lg">
+                                        <Truck className="h-10 w-10 mx-auto text-muted-foreground" />
+                                        <p className="mt-4 font-medium">Your delivery has not started yet.</p>
+                                        <p className="text-sm text-muted-foreground">The map will appear here once the driver is on the way.</p>
+                                    </div>
+                                 )}
                                 <OrderStatusStepper status={order.status} />
                                 <Separator />
                                 <div className="space-y-4">
