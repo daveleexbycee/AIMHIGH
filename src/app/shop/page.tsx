@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart, Star, Heart, SlidersHorizontal, X } from "lucide-react";
 import { useProducts } from "@/hooks/use-products";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -34,7 +34,8 @@ function Shop() {
   const { toast } = useToast();
   const { products, loading } = useProducts();
 
-  const [priceRange, setPriceRange] = useState([0, 500000]);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [selectedRating, setSelectedRating] = useState(0);
   const [sortBy, setSortBy] = useState("rating-desc");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -75,10 +76,12 @@ function Shop() {
   
   const filteredAndSortedProducts = useMemo(() => {
     const searchQuery = searchParams.get('q')?.toLowerCase() || '';
+    const min = parseFloat(minPrice) || 0;
+    const max = parseFloat(maxPrice) || Infinity;
 
     let filtered = products.filter(product => {
       const matchesSearch = searchQuery ? product.name.toLowerCase().includes(searchQuery) : true;
-      const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+      const matchesPrice = product.price >= min && product.price <= max;
       const averageRating = product.rating || 0;
       const matchesRating = selectedRating > 0 ? Math.round(averageRating) >= selectedRating : true;
       const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
@@ -101,10 +104,11 @@ function Shop() {
     }
 
     return filtered;
-  }, [searchParams, products, priceRange, selectedRating, sortBy, selectedCategory]);
+  }, [searchParams, products, minPrice, maxPrice, selectedRating, sortBy, selectedCategory]);
   
   const clearFilters = () => {
-      setPriceRange([0, 500000]);
+      setMinPrice("");
+      setMaxPrice("");
       setSelectedRating(0);
       setSelectedCategory("All");
   };
@@ -135,16 +139,22 @@ function Shop() {
             </div>
             <div>
                 <Label>Price Range</Label>
-                <Slider
-                    value={priceRange}
-                    max={500000}
-                    step={1000}
-                    onValueChange={(value) => setPriceRange(value)}
-                    className="mt-2"
-                />
-                 <div className="flex justify-between text-sm text-muted-foreground mt-2">
-                    <span>₦{priceRange[0]}</span>
-                    <span>₦{priceRange[1]}</span>
+                <div className="flex items-center gap-2 mt-2">
+                    <Input 
+                        type="number" 
+                        placeholder="Min" 
+                        value={minPrice} 
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        className="w-full"
+                    />
+                     <span>-</span>
+                    <Input 
+                        type="number" 
+                        placeholder="Max" 
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        className="w-full"
+                    />
                 </div>
             </div>
             <div>
