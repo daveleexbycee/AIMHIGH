@@ -11,6 +11,27 @@ import { useWishlist } from "@/hooks/use-wishlist";
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart, Star, Heart, ArrowRight } from "lucide-react";
 import { useProducts } from "@/hooks/use-products";
+import { Skeleton } from "./ui/skeleton";
+
+function ProductListFallback() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {Array.from({ length: 8 }).map((_, index) => (
+          <Card key={index} className="overflow-hidden">
+              <Skeleton className="h-48 w-full" />
+              <CardContent className="p-4 space-y-2">
+                  <Skeleton className="h-4 w-4/5" />
+                  <Skeleton className="h-4 w-2/5" />
+                  <div className="flex justify-between items-center pt-2">
+                      <Skeleton className="h-6 w-1/3" />
+                      <Skeleton className="h-9 w-9 rounded-full" />
+                  </div>
+              </CardContent>
+          </Card>
+      ))}
+    </div>
+  )
+}
 
 export function ProductList() {
   const { addToCart } = useCart();
@@ -44,7 +65,7 @@ export function ProductList() {
   };
   
   if (loading) {
-      return <div>Loading products...</div>
+      return <ProductListFallback />
   }
 
   return (
