@@ -36,11 +36,11 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8">
         <section className="relative rounded-lg overflow-hidden mb-12 min-h-[400px] flex items-center">
             <Image 
-              src="https://images.unsplash.com/photo-1617806118233-14e1c204b868?q=80&w=1080&auto=format&fit=crop"
-              alt="Cozy armchair sits near a fireplace in a room" 
+              src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop"
+              alt="Dark sofa in a modern, moody living room setting." 
               fill
               className="object-cover"
-              data-ai-hint="cozy armchair"
+              data-ai-hint="dark sofa"
             />
             <div className="absolute inset-0 bg-black/50" />
             <div className="relative z-10 p-8 text-center text-white w-full">
