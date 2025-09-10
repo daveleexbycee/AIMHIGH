@@ -274,6 +274,7 @@ export default function AdminDashboard() {
                                 <div className="space-y-2">
                                     <h4 className="font-semibold">Payment Details</h4>
                                     <div className="text-muted-foreground">
+                                        <p>Shipping Fee: ₦{selectedOrder.shippingFee.toFixed(2)}</p>
                                         <p>Total: ₦{selectedOrder.total.toFixed(2)}</p>
                                         <p>Method: Arrange payment via WhatsApp</p>
                                     </div>
@@ -327,5 +328,3 @@ export default function AdminDashboard() {
       </div>
     )
   }
-
-    
