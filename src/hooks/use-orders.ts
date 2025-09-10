@@ -28,9 +28,6 @@ export interface Order {
       zip: string;
   };
   shippingFee: number;
-  isPayOnDelivery?: boolean;
-  amountPaid?: number;
-  outstandingAmount?: number;
   userLocation?: { lat: number, lng: number };
   driverLocation?: { lat: number, lng: number };
 }
@@ -55,3 +52,5 @@ export function useOrders() {
 
   return { orders, loading };
 }
+
+    

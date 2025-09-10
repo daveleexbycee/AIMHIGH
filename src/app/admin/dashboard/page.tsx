@@ -271,15 +271,11 @@ export default function AdminDashboard() {
                                         {selectedOrder.shippingAddress.zip && `${selectedOrder.shippingAddress.zip}`}
                                     </address>
                                 </div>
-                                 <div className="space-y-2">
+                                <div className="space-y-2">
                                     <h4 className="font-semibold">Payment Details</h4>
                                     <div className="text-muted-foreground">
                                         <p>Total: ₦{selectedOrder.total.toFixed(2)}</p>
-                                        <p>Amount Paid: ₦{(selectedOrder.amountPaid || 0).toFixed(2)}</p>
-                                        {selectedOrder.outstandingAmount && selectedOrder.outstandingAmount > 0 && (
-                                           <p>Due on Delivery: ₦{selectedOrder.outstandingAmount.toFixed(2)}</p>
-                                        )}
-                                        <p>Method: {selectedOrder.isPayOnDelivery ? "Part-payment (Delivery)" : "Paid Online"}</p>
+                                        <p>Method: Arrange payment via WhatsApp</p>
                                     </div>
                                 </div>
                                 <Separator />
@@ -331,3 +327,5 @@ export default function AdminDashboard() {
       </div>
     )
   }
+
+    

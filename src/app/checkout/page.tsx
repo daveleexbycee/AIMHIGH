@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCart } from "@/hooks/use-cart";
 import Image from "next/image";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { addOrder, updateUserLocationInOrder } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
@@ -36,7 +35,6 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [paymentMethod, setPaymentMethod] = useState("card");
   const [selectedLGA, setSelectedLGA] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
@@ -52,18 +50,6 @@ export default function CheckoutPage() {
   const availableLGAs = useMemo(() => {
     return selectedState ? selectedState.lgas : [];
   }, [selectedState]);
-
-  const amountDueNow = useMemo(() => {
-    if (paymentMethod === 'delivery') {
-        return shippingFee + (subtotal / 2);
-    }
-    return totalPrice;
-  }, [paymentMethod, shippingFee, subtotal, totalPrice]);
-
-  const outstandingAmount = useMemo(() => {
-    return totalPrice - amountDueNow;
-  }, [totalPrice, amountDueNow]);
-
 
   useEffect(() => {
     if (!loading && !user) {
@@ -103,7 +89,7 @@ export default function CheckoutPage() {
             items: cart,
             total: totalPrice,
             shippingFee: shippingFee,
-            status: "Pending", // Or based on payment
+            status: "Pending",
             date: new Date(),
             shippingAddress: {
                 firstName: formData.get('firstName') as string,
@@ -113,10 +99,7 @@ export default function CheckoutPage() {
                 state: selectedState.name,
                 lga: selectedLGA,
                 zip: formData.get('zip') as string,
-            },
-            isPayOnDelivery: paymentMethod === 'delivery',
-            amountPaid: amountDueNow,
-            outstandingAmount: outstandingAmount
+            }
         });
 
         // Get user location and add it to the order
@@ -275,51 +258,6 @@ export default function CheckoutPage() {
                 </div>
               </CardContent>
             </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Payment Method</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                     <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-4">
-                        <div className="flex items-center space-x-2 p-4 border rounded-md has-[[data-state=checked]]:border-primary">
-                            <RadioGroupItem value="card" id="card" />
-                            <Label htmlFor="card" className="flex-1 cursor-pointer">Pay Full Amount Online</Label>
-                        </div>
-                        <div className="flex flex-col p-4 border rounded-md has-[[data-state=checked]]:border-primary">
-                             <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="delivery" id="delivery" />
-                                <Label htmlFor="delivery" className="flex-1 cursor-pointer">Part-payment (Pay on Delivery)</Label>
-                             </div>
-                             <p className="text-sm text-muted-foreground mt-2 pl-6">
-                                Pay the shipping fee and 50% of the item cost now. Pay the outstanding balance on delivery.
-                             </p>
-                        </div>
-                    </RadioGroup>
-                    {paymentMethod === 'card' && (
-                        <div className="border p-4 rounded-md space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="card-name">Name on Card</Label>
-                                <Input id="card-name" placeholder="John Doe" required />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="card-number">Card Number</Label>
-                                <Input id="card-number" placeholder="•••• •••• •••• ••••" required />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="expiry-date">Expiry Date</Label>
-                                    <Input id="expiry-date" placeholder="MM/YY" required />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="cvc">CVC</Label>
-                                    <Input id="cvc" placeholder="•••" required />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
           </div>
 
           <div className="space-y-6">
@@ -354,28 +292,16 @@ export default function CheckoutPage() {
                 </div>
                 <Separator />
                  <div className="flex justify-between font-bold text-lg">
-                  <p>Total Order Value</p>
+                  <p>Total</p>
                   <p>₦{totalPrice.toFixed(2)}</p>
                 </div>
               </CardContent>
-              <CardFooter className="flex flex-col gap-4 bg-secondary p-4">
-                 <div className="w-full flex justify-between font-bold text-lg text-primary">
-                    <p>Amount Due Now</p>
-                    <p>₦{amountDueNow.toFixed(2)}</p>
-                </div>
-                {paymentMethod === 'delivery' && outstandingAmount > 0 && (
-                    <div className="w-full flex justify-between text-sm text-muted-foreground">
-                        <p>Due on Delivery</p>
-                        <p>₦{outstandingAmount.toFixed(2)}</p>
-                    </div>
-                )}
-              </CardFooter>
             </Card>
             <Button type="submit" size="lg" className="w-full" disabled={cart.length === 0 || isSubmitting}>
                 {isSubmitting ? (
                     <LoaderCircle className="animate-spin" />
                 ) : (
-                    `Pay ₦${amountDueNow.toFixed(2)} & Place Order`
+                    `Place Order`
                 )}
             </Button>
           </div>
