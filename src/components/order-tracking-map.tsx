@@ -147,4 +147,3 @@ export function OrderTrackingMap({ order }: { order: Order }) {
         </div>
     );
 }
-
