@@ -9,11 +9,16 @@ const ordersCollection = collection(db, 'orders');
 const usersCollection = collection(db, 'users');
 
 
-export const addProduct = async (product: Omit<Product, 'id'>) => {
-    return await addDoc(productsCollection, product);
+export const addProduct = async (product: Omit<Product, 'id' | 'rating' | 'reviews'>) => {
+    const newProduct = {
+        ...product,
+        rating: 0,
+        reviews: [],
+    };
+    return await addDoc(productsCollection, newProduct);
 };
 
-export const updateProduct = async (id: string, product: Omit<Product, 'id'>) => {
+export const updateProduct = async (id: string, product: Partial<Omit<Product, 'id'>>) => {
     const productDoc = doc(db, 'products', id);
     return await updateDoc(productDoc, product);
 };

@@ -76,7 +76,7 @@ export default function AdminProductsPage() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         
-        const productData: Omit<Product, 'id' | 'rating' | 'reviews'> & { rating?: number, reviews?: any[] } = {
+        const productData = {
             name: formData.get("name") as string,
             price: parseFloat(formData.get("price") as string),
             originalPrice: formData.get("originalPrice") ? parseFloat(formData.get("originalPrice") as string) : undefined,
@@ -89,7 +89,7 @@ export default function AdminProductsPage() {
 
         try {
             if (editingProduct) {
-                // Update existing product, preserving rating and reviews
+                // Update existing product
                 const updateData = { ...productData, rating: editingProduct.rating, reviews: editingProduct.reviews };
                 await updateProduct(editingProduct.id, updateData);
                  toast({
@@ -97,12 +97,8 @@ export default function AdminProductsPage() {
                     description: `${productData.name} has been updated.`,
                 });
             } else {
-                // Add new product with default rating and reviews
-                await addProduct({
-                    ...productData,
-                    rating: 0,
-                    reviews: [],
-                });
+                // Add new product
+                await addProduct(productData);
                  toast({
                     title: "Product Added",
                     description: `${productData.name} has been added to your store.`,
