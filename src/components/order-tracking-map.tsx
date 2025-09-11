@@ -10,7 +10,7 @@ import { Order } from "@/hooks/use-orders";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-const MAPBOX_TOKEN = "pk.eyJ1IjoiZWNoaWxvcmQiLCJhIjoiY21mNzh0ZnkyMG5saTJtczllajdhbHo1OSJ9.07buYJn6Z-OlYJHDpIYzIw";
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 async function getDirections(start: {lng: number, lat: number}, end: {lng: number, lat: number}) {
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.lng},${start.lat};${end.lng},${end.lat}?geometries=polyline&access_token=${MAPBOX_TOKEN}`;
