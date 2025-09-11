@@ -76,7 +76,7 @@ export default function AdminProductsPage() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         
-        const productData: Omit<Product, 'id'> = {
+        const productData: Omit<Product, 'id' | 'rating' | 'reviews'> & { rating?: number, reviews?: any[] } = {
             name: formData.get("name") as string,
             price: parseFloat(formData.get("price") as string),
             originalPrice: formData.get("originalPrice") ? parseFloat(formData.get("originalPrice") as string) : undefined,
@@ -85,14 +85,13 @@ export default function AdminProductsPage() {
             description: formData.get("description") as string,
             category: formData.get("category") as string,
             tag: formData.get("tag") as string,
-            rating: editingProduct?.rating || 0,
-            reviews: editingProduct?.reviews || [],
         };
 
         try {
             if (editingProduct) {
-                // Update existing product
-                await updateProduct(editingProduct.id, productData);
+                // Update existing product, preserving rating and reviews
+                const updateData = { ...productData, rating: editingProduct.rating, reviews: editingProduct.reviews };
+                await updateProduct(editingProduct.id, updateData);
                  toast({
                     title: "Product Updated",
                     description: `${productData.name} has been updated.`,
