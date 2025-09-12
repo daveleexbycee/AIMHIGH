@@ -103,7 +103,7 @@ export default function CheckoutPage() {
         
         toast({
             title: "Order Placed Successfully!",
-            description: `Your Order ID is ${orderId}.`,
+            description: `Your Order ID is ${orderId}. Redirecting to WhatsApp...`,
         });
 
         clearCart();
