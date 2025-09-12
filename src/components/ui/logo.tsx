@@ -6,7 +6,7 @@ export function Logo({ className, ...props }: React.SVGProps<SVGSVGElement>) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 108 108"
-      className={cn("text-primary", className)}
+      className={cn("text-logo-green", className)}
       {...props}
     >
       <g>
@@ -39,7 +39,7 @@ export function Logo({ className, ...props }: React.SVGProps<SVGSVGElement>) {
         
         {/* Hammers Icon */}
         <g transform="translate(42, 22) scale(1.2)">
-          <path d="M15.2 2.8L12.4 0 9.2 3.2l2.8 2.8L15.2 2.8zM4.8 17.2L2 20l3.2 3.2 2.8-2.8-2.8-2.8z" fill="white" />
+          <path d="M15.2 2.8L12.4 0 9.2 3.2l2.8 2.8L15.2 2.8z" fill="white" />
           <path d="M12.4 14.8L9.6 12l-6.4 6.4 2.8 2.8 6.4-6.4zM9.2 8.8L6.4 6 0 12.4l2.8 2.8L9.2 8.8z" fill="white"/>
         </g>
         
