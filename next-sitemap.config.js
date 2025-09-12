@@ -2,4 +2,5 @@
 module.exports = {
   siteUrl: 'https://aimhigh-store.com',
   generateRobotsTxt: true,
+  outDir: './out'
 }
