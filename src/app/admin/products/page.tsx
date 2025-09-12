@@ -37,7 +37,7 @@ import { useProducts } from "@/hooks/use-products"
 import type { Product } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { updateProduct, deleteProduct } from "@/lib/firestore"
+import { addProduct, updateProduct, deleteProduct } from "@/lib/firestore"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export default function AdminProductsPage() {
@@ -102,22 +102,11 @@ export default function AdminProductsPage() {
                     description: `${dataToUpdate.name} has been updated.`,
                 });
             } else {
-                // Add new product via API route
-                const res = await fetch("/api/products", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(productData),
-                });
-
-                if (!res.ok) {
-                    const errorData = await res.json();
-                    throw new Error(errorData.error || "Something went wrong");
-                }
-
-                const data = await res.json();
-                 toast({
+                // Add new product
+                await addProduct(productData);
+                toast({
                     title: "Product Added",
-                    description: `${data.name} has been added to your store.`,
+                    description: `${productData.name} has been added to your store.`,
                 });
             }
             mutate(); // Re-fetch products
