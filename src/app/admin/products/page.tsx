@@ -77,16 +77,27 @@ export default function AdminProductsPage() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         
-        const productData = {
+        const price = parseFloat(formData.get("price") as string);
+        const originalPriceValue = formData.get("originalPrice") as string;
+        const tagValue = formData.get("tag") as string;
+    
+        const productData: any = {
             name: formData.get("name") as string,
-            price: parseFloat(formData.get("price") as string),
-            originalPrice: formData.get("originalPrice") ? parseFloat(formData.get("originalPrice") as string) : undefined,
+            price: price,
             image: formData.get("image") as string || "https://placehold.co/400x400.png",
             hint: (formData.get("name") as string).toLowerCase(),
             description: formData.get("description") as string,
             category: formData.get("category") as string,
-            tag: formData.get("tag") as string,
         };
+
+        if (originalPriceValue) {
+            productData.originalPrice = parseFloat(originalPriceValue);
+        }
+
+        if (tagValue && tagValue !== 'None') {
+            productData.tag = tagValue;
+        }
+
 
         try {
             if (editingProduct) {
