@@ -1,11 +1,11 @@
 {
-  "name": "Morden - Modern Furniture Brands",
-  "short_name": "Morden",
-  "description": "Discover modern furniture for your home. Up to 50% off.",
-  "start_url": "/",
+  "name": "Aimhigh",
+  "short_name": "Aimhigh",
+  "description": "Aimhigh Furniture Brands - Modern furniture for modern living.",
+  "start_url": "/shop",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#075E54",
   "icons": [
     {
       "src": "/icon-192x192.png",
