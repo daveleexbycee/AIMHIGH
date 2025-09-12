@@ -23,6 +23,12 @@ import { addReview } from "@/lib/firestore";
 import { Product } from "@/hooks/use-cart";
 import { Skeleton } from "@/components/ui/skeleton";
 
+// This tells Next.js not to pre-render any specific product pages at build time.
+// They will be rendered on-demand on the client side.
+export async function generateStaticParams() {
+  return [];
+}
+
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -264,3 +270,5 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     </>
   );
 }
+
+    
