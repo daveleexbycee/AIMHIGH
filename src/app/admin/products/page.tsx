@@ -37,11 +37,11 @@ import { useProducts } from "@/hooks/use-products"
 import type { Product } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { addProduct, updateProduct, deleteProduct } from "@/lib/firestore"
+import { updateProduct, deleteProduct } from "@/lib/firestore"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export default function AdminProductsPage() {
-    const { products, loading } = useProducts();
+    const { products, loading, mutate } = useProducts();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const { toast } = useToast();
@@ -63,6 +63,7 @@ export default function AdminProductsPage() {
                 title: "Product Deleted",
                 description: "The product has been successfully removed.",
             });
+            mutate(); // Re-fetch products
         } catch (error) {
              toast({
                 variant: "destructive",
@@ -76,7 +77,7 @@ export default function AdminProductsPage() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         
-        const baseData = {
+        const productData = {
             name: formData.get("name") as string,
             price: parseFloat(formData.get("price") as string),
             originalPrice: formData.get("originalPrice") ? parseFloat(formData.get("originalPrice") as string) : undefined,
@@ -90,31 +91,43 @@ export default function AdminProductsPage() {
         try {
             if (editingProduct) {
                 // Update existing product
-                const productData = { 
-                    ...baseData, 
+                 const dataToUpdate = { 
+                    ...productData, 
                     rating: editingProduct.rating, 
                     reviews: editingProduct.reviews 
                 };
-                await updateProduct(editingProduct.id, productData);
+                await updateProduct(editingProduct.id, dataToUpdate);
                  toast({
                     title: "Product Updated",
-                    description: `${productData.name} has been updated.`,
+                    description: `${dataToUpdate.name} has been updated.`,
                 });
             } else {
-                // Add new product
-                await addProduct(baseData);
+                // Add new product via API route
+                const res = await fetch("/api/products", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(productData),
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Something went wrong");
+                }
+
+                const data = await res.json();
                  toast({
                     title: "Product Added",
-                    description: `${baseData.name} has been added to your store.`,
+                    description: `${data.name} has been added to your store.`,
                 });
             }
+            mutate(); // Re-fetch products
             setIsDrawerOpen(false);
             setEditingProduct(null);
-        } catch (error) {
+        } catch (error: any) {
              toast({
                 variant: "destructive",
                 title: `Error ${editingProduct ? "Updating" : "Adding"} Product`,
-                description: `There was a problem ${editingProduct ? "updating" : "adding"} the product.`,
+                description: error.message || `There was a problem ${editingProduct ? "updating" : "adding"} the product.`,
             });
         }
     };

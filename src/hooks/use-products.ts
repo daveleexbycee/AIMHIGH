@@ -1,28 +1,34 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { useState, useEffect, useCallback } from 'react';
+import { collection, onSnapshot, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Product } from './use-cart';
+
+async function getProducts() {
+  const snapshot = await getDocs(collection(db, 'products'));
+  const productsData: Product[] = [];
+  snapshot.forEach((doc) => {
+    productsData.push({ id: doc.id, ...doc.data() } as Product);
+  });
+  return productsData;
+}
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const productsData: Product[] = [];
-      snapshot.forEach((doc) => {
-        productsData.push({ id: doc.id, ...doc.data() } as Product);
-      });
-      setProducts(productsData);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    const data = await getProducts();
+    setProducts(data);
+    setLoading(false);
   }, []);
 
-  return { products, loading };
-}
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
+  return { products, loading, mutate: fetchProducts };
+}
