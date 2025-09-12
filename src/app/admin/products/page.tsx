@@ -76,7 +76,7 @@ export default function AdminProductsPage() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         
-        const productData = {
+        const baseData = {
             name: formData.get("name") as string,
             price: parseFloat(formData.get("price") as string),
             originalPrice: formData.get("originalPrice") ? parseFloat(formData.get("originalPrice") as string) : undefined,
@@ -90,18 +90,22 @@ export default function AdminProductsPage() {
         try {
             if (editingProduct) {
                 // Update existing product
-                const updateData = { ...productData, rating: editingProduct.rating, reviews: editingProduct.reviews };
-                await updateProduct(editingProduct.id, updateData);
+                const productData = { 
+                    ...baseData, 
+                    rating: editingProduct.rating, 
+                    reviews: editingProduct.reviews 
+                };
+                await updateProduct(editingProduct.id, productData);
                  toast({
                     title: "Product Updated",
                     description: `${productData.name} has been updated.`,
                 });
             } else {
                 // Add new product
-                await addProduct(productData);
+                await addProduct(baseData);
                  toast({
                     title: "Product Added",
-                    description: `${productData.name} has been added to your store.`,
+                    description: `${baseData.name} has been added to your store.`,
                 });
             }
             setIsDrawerOpen(false);
