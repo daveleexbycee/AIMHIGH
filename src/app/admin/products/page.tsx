@@ -102,11 +102,7 @@ export default function AdminProductsPage() {
         try {
             if (editingProduct) {
                 // Update existing product
-                 const dataToUpdate = { 
-                    ...productData, 
-                    rating: editingProduct.rating, 
-                    reviews: editingProduct.reviews 
-                };
+                 const dataToUpdate = { ...productData };
                 await updateProduct(editingProduct.id, dataToUpdate);
                  toast({
                     title: "Product Updated",

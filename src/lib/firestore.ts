@@ -1,12 +1,30 @@
 
 import { db } from './firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc, runTransaction } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc, runTransaction, getDocs } from 'firebase/firestore';
 import { Product, Review } from '@/hooks/use-cart';
 import { Order } from '@/hooks/use-orders';
 
 const productsCollection = collection(db, 'products');
 const ordersCollection = collection(db, 'orders');
 const usersCollection = collection(db, 'users');
+
+export const getProducts = async (): Promise<Product[]> => {
+    const snapshot = await getDocs(productsCollection);
+    const products: Product[] = [];
+    snapshot.forEach(doc => {
+        products.push({ id: doc.id, ...doc.data() } as Product);
+    });
+    return products;
+}
+
+export const getProduct = async (id: string): Promise<Product | null> => {
+    const docRef = doc(db, 'products', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as Product;
+    }
+    return null;
+}
 
 
 export const addProduct = async (product: Omit<Product, 'id' | 'rating' | 'reviews'>) => {
@@ -18,9 +36,19 @@ export const addProduct = async (product: Omit<Product, 'id' | 'rating' | 'revie
     return await addDoc(productsCollection, newProduct);
 };
 
-export const updateProduct = async (id: string, product: Partial<Product>) => {
+export const updateProduct = async (id: string, productData: Partial<Product>) => {
     const productDoc = doc(db, 'products', id);
-    return await updateDoc(productDoc, product);
+
+    const dataToUpdate: any = { ...productData };
+
+    if ('originalPrice' in dataToUpdate && (dataToUpdate.originalPrice === undefined || dataToUpdate.originalPrice === null || dataToUpdate.originalPrice === '')) {
+      delete dataToUpdate.originalPrice;
+    }
+    if ('tag' in dataToUpdate && (dataToUpdate.tag === undefined || dataToUpdate.tag === null || dataToUpdate.tag === 'None')) {
+      delete dataToUpdate.tag;
+    }
+    
+    return await updateDoc(productDoc, dataToUpdate);
 };
 
 export const deleteProduct = async (id: string) => {
