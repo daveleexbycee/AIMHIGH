@@ -119,7 +119,7 @@ export function ProductList() {
                     {product.originalPrice && (
                       <p className="text-xs text-muted-foreground line-through">₦{product.originalPrice.toFixed(2)}</p>
                     )}
-                    <p className="font-bold text-primary text-lg">₦{product.price.toFixed(2)}</p>
+                    <p className="font-bold text-price text-lg">₦{product.price.toFixed(2)}</p>
                   </div>
                   <Button variant="outline" size="icon" className="h-9 w-9 rounded-full" onClick={() => handleAddToCart(product)}>
                     <ShoppingCart className="h-4 w-4" />

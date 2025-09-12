@@ -176,7 +176,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 {product.originalPrice && (
                     <p className="text-xl text-muted-foreground line-through">₦{product.originalPrice.toFixed(2)}</p>
                 )}
-                <p className="text-3xl font-bold text-primary">₦{product.price.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-price">₦{product.price.toFixed(2)}</p>
             </div>
             <p className="text-muted-foreground mb-6">{product.description}</p>
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">

@@ -238,7 +238,7 @@ export function FurnitureSuggester() {
                       </div>
                   </CardContent>
                   <CardFooter>
-                      <p className="text-lg font-semibold text-primary">
+                      <p className="text-lg font-semibold text-price">
                           Est. Price: ₦{set.estimatedPrice.toLocaleString()}
                       </p>
                   </CardFooter>
