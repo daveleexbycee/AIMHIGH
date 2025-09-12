@@ -25,9 +25,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 // This tells Next.js not to pre-render any specific product pages at build time.
 // They will be rendered on-demand on the client side.
-export async function generateStaticParams() {
-  return [];
-}
+// Removed generateStaticParams to fix build error with "use client"
+// export async function generateStaticParams() {
+//   return [];
+// }
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
