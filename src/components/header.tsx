@@ -18,6 +18,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { CartSheet } from "./cart-sheet";
 import { Logo } from "./ui/logo";
+import { Separator } from "./ui/separator";
 
 const ADMIN_EMAIL = "agbidave40@gmail.com";
 
@@ -166,17 +167,6 @@ export function Header() {
         </div>
 
         <div className="md:hidden ml-auto flex items-center">
-          {renderThemeChanger()}
-          <Button variant="ghost" size="icon" className="relative" asChild>
-            <Link href="/wishlist">
-              <Heart className="h-5 w-5" />
-              {wishlist.length > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-                  {wishlist.length}
-                </span>
-              )}
-            </Link>
-          </Button>
           <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
@@ -217,6 +207,27 @@ export function Header() {
                     </Link>
                     )}
                 </nav>
+
+                 <Separator />
+
+                <div className="flex flex-col gap-2">
+                    <Link href="/wishlist" className="flex items-center justify-between text-muted-foreground transition-colors hover:text-foreground">
+                        <span>Wishlist</span>
+                        <div className="flex items-center gap-2">
+                         {wishlist.length > 0 && (
+                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                                {wishlist.length}
+                            </span>
+                         )}
+                         <Heart className="h-5 w-5" />
+                        </div>
+                    </Link>
+                    <div className="flex items-center justify-between text-muted-foreground transition-colors hover:text-foreground">
+                       <span>Theme</span>
+                       {renderThemeChanger()}
+                    </div>
+                </div>
+
                 <div className="flex flex-col gap-4 mt-auto">
                     <form onSubmit={handleSearch} className="relative">
                         <Input name="search" type="search" placeholder="Search" className="pr-10" />
