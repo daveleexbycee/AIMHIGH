@@ -9,6 +9,8 @@ import polyline from '@mapbox/polyline';
 import { Order } from "@/hooks/use-orders";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { MapIcon } from "lucide-react";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -92,6 +94,18 @@ export function OrderTrackingMap({ order }: { order: Order }) {
             zoom: 12
         };
     }, [order?.userLocation, order?.driverLocation]);
+
+    if (!MAPBOX_TOKEN) {
+        return (
+            <Alert>
+                <MapIcon className="h-4 w-4" />
+                <AlertTitle>Mapbox Token Required</AlertTitle>
+                <AlertDescription>
+                    Please add your Mapbox access token to a `.env.local` file as `NEXT_PUBLIC_MAPBOX_TOKEN` to enable the map.
+                </AlertDescription>
+            </Alert>
+        )
+    }
 
 
     return (
