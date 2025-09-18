@@ -37,7 +37,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendWelcomeEmail({ email, name }: { email: string, name: string }) {
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Aimhigh Store <onboarding@resend.dev>',
+            from: 'Aimhigh Store <info@aimhigh.store>',
             to: [email],
             subject: 'Welcome to Aimhigh Furniture!',
             react: WelcomeEmail({ name }),
@@ -59,7 +59,7 @@ export async function sendWelcomeEmail({ email, name }: { email: string, name: s
 export async function sendOrderConfirmationEmail(props: OrderConfirmationEmailProps) {
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Aimhigh Store <orders@resend.dev>',
+            from: 'Aimhigh Store <orders@aimhigh.store>',
             to: [props.email],
             subject: `Your Aimhigh Order Confirmation [${props.orderId}]`,
             react: OrderConfirmationEmail(props),

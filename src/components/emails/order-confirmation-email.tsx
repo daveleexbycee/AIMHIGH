@@ -134,7 +134,7 @@ import {
           <Section style={footer.container}>
             <Text style={footer.text}>
               © 2015 Aimhigh Furnitures, Port Harcourt, Nigeria. If you have any
-              questions, contact us at aimhighfurniture@gmail.com
+              questions, contact us at support@aimhigh.store
             </Text>
           </Section>
         </Container>
