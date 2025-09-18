@@ -2,6 +2,8 @@
 
 import { suggestFurnitureSets, SuggestFurnitureSetsInput, SuggestFurnitureSetsOutput } from "@/ai/flows/suggest-furniture-sets";
 import { z } from "zod";
+import { Resend } from 'resend';
+import { WelcomeEmail } from '@/components/emails/welcome-email';
 
 const SuggestionFormSchema = z.object({
     stylePreferences: z.string().min(1, "Style preference is required."),
@@ -24,5 +26,29 @@ export async function getFurnitureSuggestions(
     } catch (error) {
         console.error("AI suggestion failed:", error);
         return { success: false, error: "Failed to get suggestions. Please try again later." };
+    }
+}
+
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function sendWelcomeEmail({ email, name }: { email: string, name: string }) {
+    try {
+        const { data, error } = await resend.emails.send({
+            from: 'Aimhigh Store <onboarding@resend.dev>',
+            to: [email],
+            subject: 'Welcome to Aimhigh Furniture!',
+            react: WelcomeEmail({ name }),
+        });
+
+        if (error) {
+            console.error("Resend error:", error);
+            return { success: false, error: error.message };
+        }
+
+        return { success: true, data };
+    } catch (error) {
+        console.error("Failed to send welcome email:", error);
+        return { success: false, error: "An unexpected error occurred." };
     }
 }

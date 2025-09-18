@@ -13,6 +13,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Logo } from "@/components/ui/logo"
+import { sendWelcomeEmail } from "@/app/actions"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -56,17 +57,19 @@ export default function SignupPage() {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            await updateProfile(user, {
-                displayName: `${firstName} ${lastName}`
-            });
+            const displayName = `${firstName} ${lastName}`;
+            await updateProfile(user, { displayName });
 
             // Add user to Firestore
             await addUser({
                 uid: user.uid,
-                displayName: `${firstName} ${lastName}`,
+                displayName: displayName,
                 email: user.email!,
                 createdAt: new Date(),
             });
+
+            // Send welcome email
+            await sendWelcomeEmail({ email: user.email!, name: displayName });
 
             toast({ title: 'Account created successfully!' });
             router.push('/');
@@ -92,6 +95,9 @@ export default function SignupPage() {
                 email: user.email!,
                 createdAt: new Date(),
             });
+
+            // Send welcome email
+            await sendWelcomeEmail({ email: user.email!, name: user.displayName || 'there' });
 
             toast({ title: 'Signed up with Google successfully!' });
             router.push('/');
