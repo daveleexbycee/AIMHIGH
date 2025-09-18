@@ -1,21 +1,298 @@
 
-import * as React from 'react';
+import {
+    Body,
+    Button,
+    Container,
+    Head,
+    Hr,
+    Html,
+    Img,
+    Preview,
+    Section,
+    Text,
+    Row,
+    Column,
+    Link,
+  } from '@react-email/components';
+  import * as React from 'react';
+  
+  interface WelcomeEmailProps {
+    name: string;
+  }
+  
+  const baseUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:9002';
+  
+  export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({ name }) => (
+    <Html>
+      <Head />
+      <Preview>Welcome to Aimhigh - Where Style Meets Comfort.</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={header}>
+            <Text style={headerText}>Aimhigh</Text>
+          </Section>
+          <Section style={heroSection}>
+            <Img
+              src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=2158&auto=format&fit=crop"
+              width="600"
+              height="400"
+              alt="Stylish armchair in a room"
+              style={heroImage}
+            />
+            <Text style={heroTextAbove}>WELCOME TO THE FAMILY</Text>
+            <Text style={heroTitle}>Aimhigh Furnitures</Text>
+            <Text style={heroSubtitle}>
+              New Member Offer • Get <span style={{color: '#E5C100'}}>20% OFF</span> your first order
+            </Text>
+            <Button style={button} href={`${baseUrl}/shop`}>
+              Shop Now
+            </Button>
+          </Section>
+  
+          <Section style={{ padding: '40px 20px' }}>
+            <Text style={exploreTitle}>Explore the best for you</Text>
+  
+            <Row style={{ marginBottom: '20px' }}>
+              <Column align="left" style={{ width: '48%' }}>
+                <Img
+                  src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop"
+                  alt="Modern Sofa"
+                  style={featureImage}
+                />
+              </Column>
+              <Column align="right" style={{ width: '48%', paddingLeft: '20px' }}>
+                <Text style={featureText}>
+                  Discover our exclusive collection of sofas, crafted for comfort and designed to be the centerpiece of your living space.
+                </Text>
+                <Button style={featureButton} href={`${baseUrl}/shop?category=Sofa`}>
+                  Shop Sofas
+                </Button>
+              </Column>
+            </Row>
+  
+            <Row style={{ marginBottom: '20px' }}>
+                <Column align="right" style={{ width: '48%', paddingRight: '20px' }}>
+                    <Text style={featureText}>
+                    From minimalist designs to statement pieces, find the perfect table to gather around for meals, work, or conversation.
+                    </Text>
+                    <Button style={featureButton} href={`${baseUrl}/shop?category=Table`}>
+                    Shop Tables
+                    </Button>
+                </Column>
+                <Column align="left" style={{ width: '48%' }}>
+                    <Img
+                    src="https://images.unsplash.com/photo-1617304519942-53364696c6d2?q=80&w=2070&auto=format&fit=crop"
+                    alt="Dining Table"
+                    style={featureImage}
+                    />
+                </Column>
+            </Row>
 
-interface WelcomeEmailProps {
-  name: string;
-}
+            <Row>
+              <Column align="left" style={{ width: '48%' }}>
+                <Img
+                  src="https://images.unsplash.com/photo-1595526114035-0d45ab143c20?q=80&w=2070&auto=format&fit=crop"
+                  alt="Comfortable Bed"
+                  style={featureImage}
+                />
+              </Column>
+              <Column align="right" style={{ width: '48%', paddingLeft: '20px' }}>
+                <Text style={featureText}>
+                 Create your sanctuary with our range of beds and bedroom furniture, promising restful nights and serene mornings.
+                </Text>
+                <Button style={featureButton} href={`${baseUrl}/shop?category=Bed`}>
+                  Shop Beds
+                </Button>
+              </Column>
+            </Row>
+          </Section>
+  
+          <Section style={{ padding: '20px', backgroundColor: '#111111' }}>
+            <Text style={testimonialTitle}>Hear from our customers</Text>
+            <Text style={testimonialText}>"The quality and design surpassed my expectations. My living room has been completely transformed. Will be shopping here again!"</Text>
+            <Text style={testimonialRating}>★★★★★</Text>
+            <Hr style={{borderColor: '#333333'}}/>
+            <Text style={testimonialText}>"I am absolutely in love with my new dining set. The delivery was seamless and the customer service was excellent."</Text>
+            <Text style={testimonialRating}>★★★★★</Text>
+          </Section>
+  
+          <Section style={footer}>
+            <Text style={footerText}>Follow us on</Text>
+            <Row>
+                <Column align="center" style={{ width: '33%' }}>
+                    <Link href="https://www.instagram.com/aimhigh_furnitures_ahf?utm_source=qr&igsh=cjNsMW5tcmJ3NmVp">
+                        <Img src="https://i.postimg.cc/pT3gVf2k/instagram-icon.png" width="24" height="24" alt="Instagram"/>
+                    </Link>
+                </Column>
+                <Column align="center" style={{ width: '33%' }}>
+                     <Link href="https://www.tiktok.com/@osivwi8?_t=ZS-8zNGnQyVhJ3&_r=1">
+                        <Img src="https://i.postimg.cc/mD3px1dD/tiktok-icon.png" width="24" height="24" alt="TikTok"/>
+                    </Link>
+                </Column>
+                <Column align="center" style={{ width: '33%' }}>
+                    <Link href="https://wa.me/2348136523066">
+                        <Img src="https://i.postimg.cc/L8gP44s5/whatsapp-icon.png" width="24" height="24" alt="WhatsApp"/>
+                    </Link>
+                </Column>
+            </Row>
+            <Text style={footerLinks}>
+              © 2015 Aimhigh Furnitures, Port Harcourt, Nigeria <br />
+              If you have any questions, contact us at aimhighfurniture@gmail.com
+            </Text>
+            <Text style={footerLinks}>
+              You received this email because you signed up on our website.
+              <Link href={`${baseUrl}/unsubscribe`} style={unsubscribeLink}> Unsubscribe</Link>
+            </Text>
+          </Section>
+        </Container>
+      </Body>
+    </Html>
+  );
+  
 
-export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({ name }) => (
-  <div>
-    <h1>Welcome to Aimhigh Furniture, {name}!</h1>
-    <p>We are so excited to have you on board.</p>
-    <p>
-      At Aimhigh, we believe in providing modern furniture for modern living. 
-      Feel free to browse our collection and find the perfect pieces for your home.
-    </p>
-    <a href="https://www.aimhigh.store/shop">Start Shopping</a>
-    <br />
-    <p>Best, </p>
-    <p>The Aimhigh Team</p>
-  </div>
-);
+  const main = {
+    backgroundColor: '#000000',
+    color: '#ffffff',
+    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+  };
+  
+  const container = {
+    margin: '0 auto',
+    width: '600px',
+    maxWidth: '100%',
+  };
+
+  const header = {
+    padding: '20px 0',
+    textAlign: 'center' as const,
+  };
+  
+  const headerText = {
+    fontSize: '16px',
+    fontWeight: 'bold',
+    letterSpacing: '2px',
+  };
+
+  const heroSection = {
+      position: 'relative' as const,
+      textAlign: 'center' as const,
+      padding: '40px 20px',
+      backgroundColor: '#1a1a1a',
+  };
+  
+  const heroImage = {
+      position: 'absolute' as const,
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover' as const,
+      opacity: 0.15,
+  }
+
+  const heroTextAbove = {
+    fontSize: '14px',
+    letterSpacing: '1px',
+    color: '#999999',
+    margin: '0 0 10px 0',
+  }
+  
+  const heroTitle = {
+    fontSize: '48px',
+    fontWeight: 'bold',
+    margin: '0',
+    lineHeight: '1.2',
+  };
+  
+  const heroSubtitle = {
+    fontSize: '16px',
+    color: '#aaaaaa',
+    margin: '10px 0 20px 0',
+  };
+  
+  const button = {
+    backgroundColor: '#ffffff',
+    color: '#000000',
+    padding: '12px 30px',
+    borderRadius: '5px',
+    textDecoration: 'none',
+    fontSize: '16px',
+    fontWeight: 'bold',
+  };
+  
+  const exploreTitle = {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    textAlign: 'center' as const,
+    marginBottom: '30px',
+  };
+  
+  const featureImage = {
+    width: '100%',
+    borderRadius: '5px',
+  };
+  
+  const featureText = {
+    color: '#aaaaaa',
+    fontSize: '14px',
+    lineHeight: '1.6',
+  };
+
+  const featureButton = {
+    backgroundColor: 'transparent',
+    color: '#ffffff',
+    padding: '10px 20px',
+    borderRadius: '5px',
+    textDecoration: 'none',
+    fontSize: '14px',
+    border: '1px solid #ffffff',
+  };
+
+  const testimonialTitle = {
+    fontSize: '20px',
+    fontWeight: 'bold',
+    textAlign: 'center' as const,
+    marginBottom: '20px'
+  }
+  
+  const testimonialText = {
+    color: '#aaaaaa',
+    fontSize: '14px',
+    lineHeight: '1.6',
+    textAlign: 'center' as const,
+    fontStyle: 'italic',
+    padding: '0 20px'
+  }
+
+  const testimonialRating = {
+      textAlign: 'center' as const,
+      color: '#E5C100',
+      fontSize: '20px',
+      marginBottom: '20px'
+  }
+  
+  const footer = {
+    padding: '40px 20px',
+    textAlign: 'center' as const,
+  };
+
+  const footerText = {
+      fontSize: '14px',
+      color: '#999999',
+      marginBottom: '20px',
+  }
+  
+  const footerLinks = {
+    color: '#666666',
+    fontSize: '12px',
+    lineHeight: '1.5',
+    marginTop: '20px',
+  };
+
+  const unsubscribeLink = {
+      color: '#888888',
+      textDecoration: 'underline'
+  }
+  
