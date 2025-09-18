@@ -52,59 +52,41 @@ import {
           </Section>
   
           <Section style={{ padding: '40px 20px' }}>
-            <Text style={exploreTitle}>Explore the best for you</Text>
+            <Text style={exploreTitle}>Explore Our Collections</Text>
   
             <Row style={{ marginBottom: '20px' }}>
-              <Column align="left" style={{ width: '48%' }}>
-                <Img
-                  src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop"
-                  alt="Modern Sofa"
-                  style={featureImage}
-                />
+              <Column align="center" style={{ width: '32%', padding: '0 10px' }}>
+                <Link href={`${baseUrl}/product/1`}>
+                    <Img
+                    src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop"
+                    alt="Modern Sofa"
+                    style={featureImage}
+                    />
+                    <Text style={productTitle}>The Comfy Sofa</Text>
+                    <Text style={productPrice}>₦180,000</Text>
+                </Link>
               </Column>
-              <Column align="right" style={{ width: '48%', paddingLeft: '20px' }}>
-                <Text style={featureText}>
-                  Discover our exclusive collection of sofas, crafted for comfort and designed to be the centerpiece of your living space.
-                </Text>
-                <Button style={featureButton} href={`${baseUrl}/shop?category=Sofa`}>
-                  Shop Sofas
-                </Button>
-              </Column>
-            </Row>
-  
-            <Row style={{ marginBottom: '20px' }}>
-                <Column align="right" style={{ width: '48%', paddingRight: '20px' }}>
-                    <Text style={featureText}>
-                    From minimalist designs to statement pieces, find the perfect table to gather around for meals, work, or conversation.
-                    </Text>
-                    <Button style={featureButton} href={`${baseUrl}/shop?category=Table`}>
-                    Shop Tables
-                    </Button>
-                </Column>
-                <Column align="left" style={{ width: '48%' }}>
+              <Column align="center" style={{ width: '32%', padding: '0 10px' }}>
+                <Link href={`${baseUrl}/product/2`}>
                     <Img
                     src="https://images.unsplash.com/photo-1617304519942-53364696c6d2?q=80&w=2070&auto=format&fit=crop"
                     alt="Dining Table"
                     style={featureImage}
                     />
-                </Column>
-            </Row>
-
-            <Row>
-              <Column align="left" style={{ width: '48%' }}>
-                <Img
-                  src="https://images.unsplash.com/photo-1595526114035-0d45ab143c20?q=80&w=2070&auto=format&fit=crop"
-                  alt="Comfortable Bed"
-                  style={featureImage}
-                />
+                    <Text style={productTitle}>Oakwood Dining Table</Text>
+                    <Text style={productPrice}>₦250,000</Text>
+                </Link>
               </Column>
-              <Column align="right" style={{ width: '48%', paddingLeft: '20px' }}>
-                <Text style={featureText}>
-                 Create your sanctuary with our range of beds and bedroom furniture, promising restful nights and serene mornings.
-                </Text>
-                <Button style={featureButton} href={`${baseUrl}/shop?category=Bed`}>
-                  Shop Beds
-                </Button>
+              <Column align="center" style={{ width: '32%', padding: '0 10px' }}>
+                <Link href={`${baseUrl}/product/3`}>
+                    <Img
+                    src="https://images.unsplash.com/photo-1595526114035-0d45ab143c20?q=80&w=2070&auto=format&fit=crop"
+                    alt="Comfortable Bed"
+                    style={featureImage}
+                    />
+                    <Text style={productTitle}>Serenity Queen Bed</Text>
+                    <Text style={productPrice}>₦220,000</Text>
+                </Link>
               </Column>
             </Row>
           </Section>
@@ -232,24 +214,24 @@ import {
   const featureImage = {
     width: '100%',
     borderRadius: '5px',
-  };
-  
-  const featureText = {
-    color: '#aaaaaa',
-    fontSize: '14px',
-    lineHeight: '1.6',
+    height: '150px',
+    objectFit: 'cover' as const,
   };
 
-  const featureButton = {
-    backgroundColor: 'transparent',
+  const productTitle = {
     color: '#ffffff',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    textDecoration: 'none',
     fontSize: '14px',
-    border: '1px solid #ffffff',
-  };
+    fontWeight: 'bold',
+    marginTop: '10px',
+    textAlign: 'center' as const
+  }
 
+  const productPrice = {
+    color: '#E5C100',
+    fontSize: '14px',
+    textAlign: 'center' as const
+  }
+  
   const testimonialTitle = {
     fontSize: '20px',
     fontWeight: 'bold',

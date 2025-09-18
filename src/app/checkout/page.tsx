@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NIGERIA_STATES } from "@/lib/nigeria-data";
 import { LoaderCircle, MessageSquare } from "lucide-react";
+import { sendOrderConfirmationEmail } from "@/app/actions";
 
 export default function CheckoutPage() {
   const { user, loading } = useAuth();
@@ -65,28 +66,31 @@ export default function CheckoutPage() {
     const orderId = `AIMHIGH-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     const customerName = `${formData.get('firstName')} ${formData.get('lastName')}`;
     const customerLocation = `${formData.get('city')}, ${selectedLGA}, ${selectedState.name} State.`;
+    const shippingAddress = {
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
+        address: formData.get('address') as string,
+        city: formData.get('city') as string,
+        state: selectedState.name,
+        lga: selectedLGA,
+        zip: formData.get('zip') as string,
+    };
+
+    const orderData = {
+        id: orderId,
+        userId: user.uid,
+        customerName: customerName,
+        customerEmail: user.email!,
+        items: cart,
+        total: totalPrice,
+        shippingFee: shippingFee,
+        status: "Pending" as const,
+        date: new Date(),
+        shippingAddress: shippingAddress
+    };
 
     try {
-        await addOrder({
-            id: orderId,
-            userId: user.uid,
-            customerName: customerName,
-            customerEmail: user.email!,
-            items: cart,
-            total: totalPrice,
-            shippingFee: shippingFee,
-            status: "Pending",
-            date: new Date(),
-            shippingAddress: {
-                firstName: formData.get('firstName') as string,
-                lastName: formData.get('lastName') as string,
-                address: formData.get('address') as string,
-                city: formData.get('city') as string,
-                state: selectedState.name,
-                lga: selectedLGA,
-                zip: formData.get('zip') as string,
-            }
-        });
+        await addOrder(orderData);
 
         // Get user location and add it to the order
          if (navigator.geolocation) {
@@ -104,6 +108,17 @@ export default function CheckoutPage() {
         toast({
             title: "Order Placed Successfully!",
             description: `Your Order ID is ${orderId}. Redirecting to WhatsApp...`,
+        });
+
+        // Send confirmation email
+        await sendOrderConfirmationEmail({
+            orderId,
+            email: user.email!,
+            name: customerName,
+            total: totalPrice,
+            shippingAddress: `${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.lga}, ${shippingAddress.state}`,
+            items: cart,
+            date: orderData.date.toLocaleDateString()
         });
 
         clearCart();
