@@ -18,9 +18,7 @@ import {
   import { CartItem } from '@/hooks/use-cart';
   import * as React from 'react';
   
-  const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:9002';
+  const baseUrl = 'https://aimhigh.store';
   
   export interface OrderConfirmationEmailProps {
     orderId: string;

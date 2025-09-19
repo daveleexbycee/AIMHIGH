@@ -23,9 +23,7 @@ import {
     reviews: Review[];
   }
   
-  const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:9002';
+  const baseUrl = 'https://aimhigh.store';
   
   export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({ name, products, reviews }) => (
     <Html>
@@ -94,7 +92,8 @@ import {
                 {reviews.map((review, index) => (
                     <React.Fragment key={review.id}>
                         <Text style={testimonialText}>"{review.comment}"</Text>
-                        <Text style={testimonialRating}>★★★★★</Text>
+                        <Text style={testimonialRating}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</Text>
+                        <Text style={testimonialAuthor}>- {review.user}</Text>
                         {index < reviews.length - 1 && <Hr style={{borderColor: '#333333'}}/>}
                     </React.Fragment>
                 ))}
@@ -180,6 +179,7 @@ import {
     fontWeight: 'bold',
     textAlign: 'center' as const,
     marginBottom: '30px',
+    color: '#ffffff',
   };
   
   const featureImage = {
@@ -207,7 +207,8 @@ import {
     fontSize: '20px',
     fontWeight: 'bold',
     textAlign: 'center' as const,
-    marginBottom: '20px'
+    marginBottom: '20px',
+    color: '#ffffff',
   }
   
   const testimonialText = {
@@ -223,7 +224,14 @@ import {
       textAlign: 'center' as const,
       color: '#E5C100',
       fontSize: '20px',
-      marginBottom: '20px'
+      marginBottom: '5px',
+  }
+
+  const testimonialAuthor = {
+    color: '#aaaaaa',
+    fontSize: '12px',
+    textAlign: 'center' as const,
+    marginBottom: '20px',
   }
   
   const footer = {
