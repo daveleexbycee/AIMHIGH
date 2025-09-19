@@ -39,15 +39,16 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendWelcomeEmail({ email, name }: { email: string, name: string }) {
     try {
         const products = await getProducts();
-        const allReviews = products.flatMap(p => p.reviews || []).filter(r => r.comment);
+        // Get all reviews that have a comment
+        const allReviews = products.flatMap(p => p.reviews || []).filter((r): r is Review & { comment: string } => !!r.comment);
 
-        // Simple shuffle and pick 2 reviews
+        // Simple shuffle and pick up to 2 reviews
         const randomReviews = allReviews.sort(() => 0.5 - Math.random()).slice(0, 2);
 
         const { data, error } = await resend.emails.send({
             from: 'Aimhigh Store <info@aimhigh.store>',
             to: [email],
-            subject: 'Welcome to Aimhigh Furniture!',
+            subject: 'Welcome to AimHigh Furniture Store 🎉',
             react: WelcomeEmail({ name, products, reviews: randomReviews }),
         });
 

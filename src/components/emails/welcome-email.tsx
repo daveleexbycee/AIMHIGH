@@ -42,25 +42,33 @@ import {
               style={{ margin: 'auto' }}
             />
           </Section>
-          <Section style={heroSection}>
-            <Img
-              src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=2158&auto=format&fit=crop"
-              width="600"
-              height="400"
-              alt="Stylish armchair in a room"
-              style={heroImage}
-            />
-            <Text style={heroTextAbove}>WELCOME TO THE FAMILY</Text>
-            <Text style={heroTitle}>Aimhigh Furnitures</Text>
-            <Text style={heroSubtitle}>
-              New Member Offer • Get <span style={{color: '#E5C100'}}>20% OFF</span> your first order
+          
+          <Section style={mainContent}>
+            <Text style={paragraph}>Hello {name.split(' ')[0]},</Text>
+            <Text style={paragraph}>
+                Welcome to AimHigh Furniture Store! 🎊 We’re excited to have you join our community of stylish and comfort-loving homeowners.
             </Text>
-            <Button style={button} href={`${baseUrl}/shop`}>
-              Shop Now
+            <Text style={paragraph}>
+                From timeless classics to modern designs, we’ve got the perfect pieces to make your home truly yours.
+            </Text>
+            <Text style={paragraph}>
+                Stay tuned for exclusive deals, new arrivals, and inspiration tailored just for you.
+            </Text>
+             <Button style={button} href={`${baseUrl}/shop`}>
+              Start Shopping
             </Button>
+            <Text style={{...paragraph, marginTop: '24px' }}>
+                Thank you for choosing AimHigh — let’s make your home amazing together!
+            </Text>
+            <Text style={paragraph}>
+                Warm regards,
+                <br />
+                The AimHigh Furniture Team
+            </Text>
           </Section>
+
   
-          <Section style={{ padding: '40px 20px' }}>
+          <Section style={{ padding: '40px 20px', backgroundColor: '#1a1a1a' }}>
             <Text style={exploreTitle}>Explore Our Collections</Text>
   
             <Row style={{ marginBottom: '20px' }}>
@@ -80,20 +88,22 @@ import {
             </Row>
           </Section>
   
-          <Section style={{ padding: '20px', backgroundColor: '#111111' }}>
-            <Text style={testimonialTitle}>Hear from our customers</Text>
-            {reviews.slice(0,2).map((review, index) => (
-                <React.Fragment key={review.id}>
-                    <Text style={testimonialText}>"{review.comment}"</Text>
-                    <Text style={testimonialRating}>★★★★★</Text>
-                    {index < reviews.length - 1 && <Hr style={{borderColor: '#333333'}}/>}
-                </React.Fragment>
-            ))}
-          </Section>
+          {reviews && reviews.length > 0 && (
+            <Section style={{ padding: '40px 20px', backgroundColor: '#111111' }}>
+                <Text style={testimonialTitle}>Hear from our customers</Text>
+                {reviews.map((review, index) => (
+                    <React.Fragment key={review.id}>
+                        <Text style={testimonialText}>"{review.comment}"</Text>
+                        <Text style={testimonialRating}>★★★★★</Text>
+                        {index < reviews.length - 1 && <Hr style={{borderColor: '#333333'}}/>}
+                    </React.Fragment>
+                ))}
+            </Section>
+          )}
   
           <Section style={footer}>
             <Text style={footerText}>Follow us on</Text>
-            <Row>
+            <Row style={{ marginBottom: '20px' }}>
                 <Column align="center" style={{ width: '33%' }}>
                     <Link href="https://www.instagram.com/aimhigh_furnitures_ahf?utm_source=qr&igsh=cjNsMW5tcmJ3NmVp">
                         <Img src="https://i.postimg.cc/pT3gVf2k/instagram-icon.png" width="24" height="24" alt="Instagram"/>
@@ -142,49 +152,17 @@ import {
     textAlign: 'center' as const,
   };
   
-  const headerText = {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    letterSpacing: '2px',
+  const mainContent = {
+    backgroundColor: '#111111',
+    padding: '40px 20px',
   };
 
-  const heroSection = {
-      position: 'relative' as const,
-      textAlign: 'center' as const,
-      padding: '40px 20px',
-      backgroundColor: '#1a1a1a',
+  const paragraph = {
+      fontSize: '16px',
+      lineHeight: '1.5',
+      color: '#dddddd',
   };
-  
-  const heroImage = {
-      position: 'absolute' as const,
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      objectFit: 'cover' as const,
-      opacity: 0.15,
-  }
 
-  const heroTextAbove = {
-    fontSize: '14px',
-    letterSpacing: '1px',
-    color: '#999999',
-    margin: '0 0 10px 0',
-  }
-  
-  const heroTitle = {
-    fontSize: '48px',
-    fontWeight: 'bold',
-    margin: '0',
-    lineHeight: '1.2',
-  };
-  
-  const heroSubtitle = {
-    fontSize: '16px',
-    color: '#aaaaaa',
-    margin: '10px 0 20px 0',
-  };
-  
   const button = {
     backgroundColor: '#ffffff',
     color: '#000000',
@@ -193,6 +171,8 @@ import {
     textDecoration: 'none',
     fontSize: '16px',
     fontWeight: 'bold',
+    display: 'inline-block',
+    margin: '20px 0',
   };
   
   const exploreTitle = {
