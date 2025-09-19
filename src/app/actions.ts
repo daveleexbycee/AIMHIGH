@@ -6,6 +6,8 @@ import { z } from "zod";
 import { Resend } from 'resend';
 import { WelcomeEmail } from '@/components/emails/welcome-email';
 import { OrderConfirmationEmail, OrderConfirmationEmailProps } from "@/components/emails/order-confirmation-email";
+import { getProducts } from "@/lib/firestore";
+import { Review } from "@/hooks/use-cart";
 
 const SuggestionFormSchema = z.object({
     stylePreferences: z.string().min(1, "Style preference is required."),
@@ -36,11 +38,17 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendWelcomeEmail({ email, name }: { email: string, name: string }) {
     try {
+        const products = await getProducts();
+        const allReviews = products.flatMap(p => p.reviews || []).filter(r => r.comment);
+
+        // Simple shuffle and pick 2 reviews
+        const randomReviews = allReviews.sort(() => 0.5 - Math.random()).slice(0, 2);
+
         const { data, error } = await resend.emails.send({
             from: 'Aimhigh Store <info@aimhigh.store>',
             to: [email],
             subject: 'Welcome to Aimhigh Furniture!',
-            react: WelcomeEmail({ name }),
+            react: WelcomeEmail({ name, products, reviews: randomReviews }),
         });
 
         if (error) {
@@ -76,3 +84,5 @@ export async function sendOrderConfirmationEmail(props: OrderConfirmationEmailPr
         return { success: false, error: "An unexpected error occurred." };
     }
 }
+
+    

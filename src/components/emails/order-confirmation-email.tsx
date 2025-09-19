@@ -132,6 +132,23 @@ import {
             </Row>
           </Section>
           <Section style={footer.container}>
+             <Row style={{ marginBottom: '20px' }}>
+                <Column align="center" style={{ width: '33%' }}>
+                    <Link href="https://www.instagram.com/aimhigh_furnitures_ahf?utm_source=qr&igsh=cjNsMW5tcmJ3NmVp">
+                        <Img src="https://i.postimg.cc/pT3gVf2k/instagram-icon.png" width="24" height="24" alt="Instagram"/>
+                    </Link>
+                </Column>
+                <Column align="center" style={{ width: '33%' }}>
+                     <Link href="https://www.tiktok.com/@osivwi8?_t=ZS-8zNGnQyVhJ3&_r=1">
+                        <Img src="https://i.postimg.cc/mD3px1dD/tiktok-icon.png" width="24" height="24" alt="TikTok"/>
+                    </Link>
+                </Column>
+                <Column align="center" style={{ width: '33%' }}>
+                    <Link href="https://wa.me/2348136523066">
+                        <Img src="https://i.postimg.cc/L8gP44s5/whatsapp-icon.png" width="24" height="24" alt="WhatsApp"/>
+                    </Link>
+                </Column>
+            </Row>
             <Text style={footer.text}>
               © 2015 Aimhigh Furnitures, Port Harcourt, Nigeria. If you have any
               questions, contact us at support@aimhigh.store
@@ -251,3 +268,5 @@ import {
     },
   };
   
+
+    

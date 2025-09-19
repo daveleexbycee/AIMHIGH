@@ -14,24 +14,33 @@ import {
     Column,
     Link,
   } from '@react-email/components';
+  import { Product, Review } from '@/hooks/use-cart';
   import * as React from 'react';
   
   interface WelcomeEmailProps {
     name: string;
+    products: Product[];
+    reviews: Review[];
   }
   
   const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:9002';
   
-  export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({ name }) => (
+  export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({ name, products, reviews }) => (
     <Html>
       <Head />
       <Preview>Welcome to Aimhigh - Where Style Meets Comfort.</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={header}>
-            <Text style={headerText}>Aimhigh</Text>
+             <Img
+              src="https://i.postimg.cc/zX8sZ7Vn/aimhigh-logo.png"
+              width="120"
+              height="26"
+              alt="Aimhigh"
+              style={{ margin: 'auto' }}
+            />
           </Section>
           <Section style={heroSection}>
             <Img
@@ -55,49 +64,31 @@ import {
             <Text style={exploreTitle}>Explore Our Collections</Text>
   
             <Row style={{ marginBottom: '20px' }}>
-              <Column align="center" style={{ width: '32%', padding: '0 10px' }}>
-                <Link href={`${baseUrl}/product/1`}>
-                    <Img
-                    src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop"
-                    alt="Modern Sofa"
-                    style={featureImage}
-                    />
-                    <Text style={productTitle}>The Comfy Sofa</Text>
-                    <Text style={productPrice}>₦180,000</Text>
-                </Link>
-              </Column>
-              <Column align="center" style={{ width: '32%', padding: '0 10px' }}>
-                <Link href={`${baseUrl}/product/2`}>
-                    <Img
-                    src="https://images.unsplash.com/photo-1617304519942-53364696c6d2?q=80&w=2070&auto=format&fit=crop"
-                    alt="Dining Table"
-                    style={featureImage}
-                    />
-                    <Text style={productTitle}>Oakwood Dining Table</Text>
-                    <Text style={productPrice}>₦250,000</Text>
-                </Link>
-              </Column>
-              <Column align="center" style={{ width: '32%', padding: '0 10px' }}>
-                <Link href={`${baseUrl}/product/3`}>
-                    <Img
-                    src="https://images.unsplash.com/photo-1595526114035-0d45ab143c20?q=80&w=2070&auto=format&fit=crop"
-                    alt="Comfortable Bed"
-                    style={featureImage}
-                    />
-                    <Text style={productTitle}>Serenity Queen Bed</Text>
-                    <Text style={productPrice}>₦220,000</Text>
-                </Link>
-              </Column>
+              {products.slice(0, 3).map((product) => (
+                 <Column key={product.id} align="center" style={{ width: '32%', padding: '0 10px' }}>
+                    <Link href={`${baseUrl}/product/${product.id}`}>
+                        <Img
+                        src={product.image}
+                        alt={product.name}
+                        style={featureImage}
+                        />
+                        <Text style={productTitle}>{product.name}</Text>
+                        <Text style={productPrice}>₦{product.price.toLocaleString()}</Text>
+                    </Link>
+                </Column>
+              ))}
             </Row>
           </Section>
   
           <Section style={{ padding: '20px', backgroundColor: '#111111' }}>
             <Text style={testimonialTitle}>Hear from our customers</Text>
-            <Text style={testimonialText}>"The quality and design surpassed my expectations. My living room has been completely transformed. Will be shopping here again!"</Text>
-            <Text style={testimonialRating}>★★★★★</Text>
-            <Hr style={{borderColor: '#333333'}}/>
-            <Text style={testimonialText}>"I am absolutely in love with my new dining set. The delivery was seamless and the customer service was excellent."</Text>
-            <Text style={testimonialRating}>★★★★★</Text>
+            {reviews.slice(0,2).map((review, index) => (
+                <React.Fragment key={review.id}>
+                    <Text style={testimonialText}>"{review.comment}"</Text>
+                    <Text style={testimonialRating}>★★★★★</Text>
+                    {index < reviews.length - 1 && <Hr style={{borderColor: '#333333'}}/>}
+                </React.Fragment>
+            ))}
           </Section>
   
           <Section style={footer}>
@@ -278,3 +269,5 @@ import {
       textDecoration: 'underline'
   }
   
+
+    
