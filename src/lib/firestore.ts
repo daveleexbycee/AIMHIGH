@@ -1,8 +1,8 @@
-
 import { db } from './firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc, runTransaction, getDocs } from 'firebase/firestore';
 import { Product, Review } from '@/hooks/use-cart';
 import { Order } from '@/hooks/use-orders';
+import { sendFulfilledNotification } from './onesignal';
 
 const productsCollection = collection(db, 'products');
 const ordersCollection = collection(db, 'orders');
@@ -62,12 +62,21 @@ export const addOrder = async (order: any) => {
 };
 
 export const updateOrderStatus = async (orderId: string, status: Order['status'], driverLocation: { lat: number, lng: number } | null = null) => {
-    const orderDoc = doc(db, 'orders', orderId);
+    const orderDocRef = doc(db, 'orders', orderId);
     const updateData: { status: Order['status'], driverLocation?: any } = { status: status };
     if (driverLocation) {
         updateData.driverLocation = driverLocation;
     }
-    return await updateDoc(orderDoc, updateData);
+    await updateDoc(orderDocRef, updateData);
+
+    // Send notification if the order is fulfilled
+    if (status === 'Fulfilled') {
+        const orderSnap = await getDoc(orderDocRef);
+        if (orderSnap.exists()) {
+            const orderData = orderSnap.data() as Order;
+            await sendFulfilledNotification(orderData.userId, orderId);
+        }
+    }
 }
 
 export const updateUserLocationInOrder = async (orderId: string, userLocation: { lat: number, lng: number }) => {

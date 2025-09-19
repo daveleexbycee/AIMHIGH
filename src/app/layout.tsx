@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { CartProvider } from '@/hooks/use-cart';
 import { WishlistProvider } from '@/hooks/use-wishlist';
 import { Footer } from '@/components/footer';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Aimhigh - Modern Furniture Brands',
@@ -25,6 +26,17 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lexend:wght@400;500;700&display=swap" rel="stylesheet" />
         <link rel="apple-touch-icon" href="/icon-192x192.png"></link>
         <meta name="theme-color" content="#fff" />
+        <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer />
+        <Script id="onesignal-init">
+          {`
+            window.OneSignalDeferred = window.OneSignalDeferred || [];
+            OneSignalDeferred.push(async function(OneSignal) {
+              await OneSignal.init({
+                appId: "${process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID}",
+              });
+            });
+          `}
+        </Script>
       </head>
       <body className="font-body antialiased">
         <ThemeProvider
