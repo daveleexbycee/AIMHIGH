@@ -4,40 +4,48 @@
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import OneSignal from 'react-onesignal';
 
-// Add this interface to your project
-interface OneSignalWindow extends Window {
-  OneSignalDeferred?: any[];
-  OneSignal?: any;
+async function initOneSignal() {
+    if (OneSignal.Notifications.isPushSupported()) {
+        await OneSignal.init({
+            appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
+            allowLocalhostAsSecureOrigin: true,
+        });
+    } else {
+        console.warn("Push notifications are not supported on this browser.");
+    }
 }
-
-declare const window: OneSignalWindow;
-
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [oneSignalInitialized, setOneSignalInitialized] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
+    if (!oneSignalInitialized) {
+        initOneSignal().then(() => setOneSignalInitialized(true));
+    }
 
-      // OneSignal logic
-      if (user) {
-        window.OneSignalDeferred = window.OneSignalDeferred || [];
-        window.OneSignalDeferred.push(function(OneSignal) {
-          OneSignal.login(user.uid);
-        });
-      } else {
-        if (window.OneSignal) {
-            window.OneSignal.logout();
-        }
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      
+      if (oneSignalInitialized) {
+          if (user) {
+            await OneSignal.login(user.uid);
+            console.log("OneSignal user logged in:", user.uid);
+          } else {
+            if (OneSignal.User.isLoggedIn()) {
+                await OneSignal.logout();
+                console.log("OneSignal user logged out.");
+            }
+          }
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [oneSignalInitialized]);
 
   return { user, loading };
 }
