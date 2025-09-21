@@ -2,7 +2,7 @@ import { db } from './firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc, runTransaction, getDocs } from 'firebase/firestore';
 import { Product, Review } from '@/hooks/use-cart';
 import { Order } from '@/hooks/use-orders';
-import { sendFulfilledNotification } from './onesignal';
+import { sendFulfilledNotification, sendShippingNotification } from './onesignal';
 
 const productsCollection = collection(db, 'products');
 const ordersCollection = collection(db, 'orders');
@@ -69,12 +69,14 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
     }
     await updateDoc(orderDocRef, updateData);
 
-    // Send notification if the order is fulfilled
-    if (status === 'Fulfilled') {
-        const orderSnap = await getDoc(orderDocRef);
-        if (orderSnap.exists()) {
-            const orderData = orderSnap.data() as Order;
+    // Send notification based on status
+    const orderSnap = await getDoc(orderDocRef);
+    if (orderSnap.exists()) {
+        const orderData = orderSnap.data() as Order;
+        if (status === 'Fulfilled') {
             await sendFulfilledNotification(orderData.userId, orderId);
+        } else if (status === 'Shipped') {
+            await sendShippingNotification(orderData.userId, orderId);
         }
     }
 }
