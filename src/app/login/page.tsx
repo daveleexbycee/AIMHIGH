@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Logo } from "@/components/ui/logo"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { syncOneSignalUser } from "@/app/actions"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -53,7 +54,9 @@ export default function LoginPage() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            await syncOneSignalUser({ userId: user.uid, email: user.email! });
             toast({ title: 'Logged in successfully!' });
             router.push('/');
         } catch (error: any) {
@@ -68,7 +71,9 @@ export default function LoginPage() {
     const handleGoogleLogin = async () => {
         const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            await syncOneSignalUser({ userId: user.uid, email: user.email! });
             toast({ title: 'Logged in with Google successfully!' });
             router.push('/');
         } catch (error: any) {

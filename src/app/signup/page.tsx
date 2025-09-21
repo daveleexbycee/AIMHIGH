@@ -13,7 +13,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Logo } from "@/components/ui/logo"
-import { sendWelcomeEmail } from "@/app/actions"
+import { sendWelcomeEmail, syncOneSignalUser } from "@/app/actions"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -68,6 +68,9 @@ export default function SignupPage() {
                 createdAt: new Date(),
             });
 
+            // Sync user with OneSignal
+            await syncOneSignalUser({ userId: user.uid, email: user.email! });
+
             // Send welcome email
             await sendWelcomeEmail({ email: user.email!, name: displayName });
 
@@ -95,6 +98,9 @@ export default function SignupPage() {
                 email: user.email!,
                 createdAt: new Date(),
             });
+
+            // Sync user with OneSignal
+            await syncOneSignalUser({ userId: user.uid, email: user.email! });
 
             // Send welcome email
             await sendWelcomeEmail({ email: user.email!, name: user.displayName || 'there' });

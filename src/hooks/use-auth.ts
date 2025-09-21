@@ -8,6 +8,7 @@ import { auth } from '@/lib/firebase';
 // Add this interface to your project
 interface OneSignalWindow extends Window {
   OneSignalDeferred?: any[];
+  OneSignal?: any;
 }
 
 declare const window: OneSignalWindow;
@@ -26,8 +27,12 @@ export function useAuth() {
       if (user) {
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         window.OneSignalDeferred.push(function(OneSignal) {
-          OneSignal.setExternalUserId(user.uid);
+          OneSignal.login(user.uid);
         });
+      } else {
+        if (window.OneSignal) {
+            window.OneSignal.logout();
+        }
       }
     });
 

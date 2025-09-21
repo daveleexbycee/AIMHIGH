@@ -8,6 +8,7 @@ import { WelcomeEmail } from '@/components/emails/welcome-email';
 import { OrderConfirmationEmail, OrderConfirmationEmailProps } from "@/components/emails/order-confirmation-email";
 import { getProducts } from "@/lib/firestore";
 import { Review } from "@/hooks/use-cart";
+import fetch from 'node-fetch';
 
 const SuggestionFormSchema = z.object({
     stylePreferences: z.string().min(1, "Style preference is required."),
@@ -86,4 +87,39 @@ export async function sendOrderConfirmationEmail(props: OrderConfirmationEmailPr
     }
 }
 
+export async function syncOneSignalUser({ userId, email }: { userId: string, email: string }) {
+    const ONE_SIGNAL_APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
+    const ONE_SIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
+
+    if (!ONE_SIGNAL_APP_ID || !ONE_SIGNAL_REST_API_KEY) {
+        console.error("OneSignal App ID or REST API Key is not configured for user sync.");
+        return { success: false, error: "OneSignal credentials not configured." };
+    }
+
+    const options = {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${ONE_SIGNAL_REST_API_KEY}`
+        },
+        body: JSON.stringify({
+          properties: {email: email},
+          identity: {external_id: userId}
+        })
+    };
+
+    try {
+        const response = await fetch(`https://onesignal.com/api/v1/apps/${ONE_SIGNAL_APP_ID}/users`, options);
+        const data = await response.json();
+        console.log("OneSignal user sync response:", data);
+        if (response.ok) {
+            return { success: true, data };
+        }
+        return { success: false, error: (data as any)?.errors?.join(', ') || 'Failed to sync user with OneSignal' };
+    } catch (error) {
+        console.error("Error syncing user with OneSignal:", error);
+        return { success: false, error: "An unexpected error occurred during user sync." };
+    }
+}
     
